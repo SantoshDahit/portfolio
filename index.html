@@ -2221,7 +2221,7 @@
         }
 
         function autocomplete(input) {
-            const commands = ['help', 'about', 'skills', 'projects', 'experience', 'education', 'contact', 'clear', 'gui', 'home', 'easter-egg', 'matrix', 'sudo', 'whoami', 'history'];
+            const commands = ['help', 'about', 'skills', 'projects', 'experience', 'education', 'contact', 'clear', 'gui', 'exit', 'easter-egg', 'matrix', 'sudo', 'whoami', 'history'];
             const partial = input.value.toLowerCase();
             
             const matches = commands.filter(cmd => cmd.startsWith(partial));
@@ -2274,7 +2274,7 @@
                 case 'gui':
                     switchToGUI();
                     break;
-                case 'home':
+                case 'exit':
                     goHome();
                     break;
                 case 'easter-egg':
@@ -2346,8 +2346,8 @@
                         <span class="help-description">- Clear the terminal screen</span>
                     </div>
                     <div class="terminal-line">
-                        <span class="help-command">home</span>
-                        <span class="help-description">- Return to home screen (ID card)</span>
+                        <span class="help-command">exit</span>
+                        <span class="help-description">- Exit terminal and return to home screen</span>
                     </div>
                     <div class="terminal-line">
                         <span class="help-command">gui</span>
