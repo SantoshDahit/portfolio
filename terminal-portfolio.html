@@ -1,0 +1,2843 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Santosh Dahit - Terminal Portfolio</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --terminal-bg: #0a0e27;
+            --terminal-text: #00ff41;
+            --terminal-prompt: #ff00ff;
+            --terminal-error: #ff4444;
+            --terminal-success: #00ff41;
+            --terminal-info: #00d9ff;
+            --card-bg: #1a1f3a;
+            --card-border: #00ff41;
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            background: var(--terminal-bg);
+            color: var(--terminal-text);
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        /* Hanger Section */
+        .hanger-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            z-index: 1000;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+            overflow: hidden;
+        }
+
+        .hanger-container.hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        /* The hanger bar at the top */
+        .hanger-bar {
+            width: 100%;
+            background: linear-gradient(180deg, #1a1f3a 0%, #0d1226 100%);
+            padding: 20px 0;
+            border-bottom: 4px solid var(--terminal-success);
+            box-shadow: 0 10px 40px rgba(0, 255, 65, 0.3);
+            position: relative;
+            z-index: 10;
+        }
+
+        .hanger-title {
+            text-align: center;
+            font-size: 2rem;
+            color: var(--terminal-success);
+            text-shadow: 0 0 20px var(--terminal-success), 0 0 40px var(--terminal-success);
+            letter-spacing: 4px;
+            animation: glowPulse 2s ease-in-out infinite;
+        }
+
+        .hanger-subtitle {
+            text-align: center;
+            font-size: 0.9rem;
+            color: var(--terminal-info);
+            margin-top: 8px;
+            opacity: 0.8;
+            letter-spacing: 2px;
+        }
+
+        @keyframes glowPulse {
+            0%, 100% { text-shadow: 0 0 20px var(--terminal-success), 0 0 40px var(--terminal-success); }
+            50% { text-shadow: 0 0 30px var(--terminal-success), 0 0 60px var(--terminal-success), 0 0 80px var(--terminal-success); }
+        }
+
+        /* Hook on the hanger */
+        .hanger-hook {
+            position: absolute;
+            bottom: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 50px;
+            height: 50px;
+        }
+
+        .hook-svg {
+            width: 100%;
+            height: 100%;
+            filter: drop-shadow(0 5px 10px rgba(0, 255, 65, 0.5));
+        }
+
+        .hook-path {
+            fill: none;
+            stroke: var(--terminal-success);
+            stroke-width: 4;
+            stroke-linecap: round;
+        }
+
+        /* ID Card Section - hangs from the hook */
+        .id-card-container {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 20px;
+            perspective: 1000px;
+            animation: swayHanging 4s ease-in-out infinite;
+            transform-origin: top center;
+        }
+
+        @keyframes swayHanging {
+            0%, 100% { transform: rotate(-1deg); }
+            50% { transform: rotate(1deg); }
+        }
+
+        .id-card-container:hover {
+            animation-play-state: paused;
+        }
+
+        .id-card {
+            width: 400px;
+            height: 250px;
+            background: linear-gradient(135deg, #1a1f3a 0%, #2d3561 50%, #1a1f3a 100%);
+            border-radius: 15px;
+            border: 2px solid var(--card-border);
+            box-shadow:
+                0 20px 60px rgba(0, 255, 65, 0.3),
+                inset 0 1px 0 rgba(255,255,255,0.1),
+                inset 0 -1px 0 rgba(0,0,0,0.3);
+            position: relative;
+            overflow: visible;
+            cursor: grab;
+            transform-origin: top center;
+            will-change: transform;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            transform-style: preserve-3d;
+        }
+
+        /* 3D depth layers */
+        .id-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(
+                135deg,
+                transparent 0%,
+                rgba(0, 255, 65, 0.05) 50%,
+                transparent 100%
+            );
+            border-radius: 15px;
+            pointer-events: none;
+        }
+
+        /* Holographic shine effect */
+        .id-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(255, 255, 255, 0.1),
+                transparent
+            );
+            transform: skewX(-25deg);
+            animation: holographicShine 4s ease-in-out infinite;
+            pointer-events: none;
+            border-radius: 15px;
+        }
+
+        @keyframes holographicShine {
+            0%, 100% { left: -100%; }
+            50% { left: 150%; }
+        }
+
+        .id-card:hover {
+            box-shadow:
+                0 30px 80px rgba(0, 255, 65, 0.5),
+                0 0 30px rgba(0, 255, 65, 0.3),
+                inset 0 1px 0 rgba(255,255,255,0.2);
+            transform: rotateX(-5deg) rotateY(5deg) translateZ(20px);
+        }
+
+        .id-card:active {
+            cursor: grabbing;
+        }
+
+        /* ID Card chip */
+        .id-chip {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            width: 40px;
+            height: 30px;
+            background: linear-gradient(135deg, #ffd700 0%, #ffaa00 50%, #ffd700 100%);
+            border-radius: 5px;
+            box-shadow: inset 0 2px 4px rgba(255,255,255,0.5), inset 0 -2px 4px rgba(0,0,0,0.3);
+        }
+
+        .id-chip::before {
+            content: '';
+            position: absolute;
+            top: 5px;
+            left: 5px;
+            right: 5px;
+            bottom: 5px;
+            border: 1px solid rgba(0,0,0,0.2);
+            border-radius: 3px;
+        }
+
+        .id-chip::after {
+            content: '';
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            width: 24px;
+            height: 14px;
+            background: repeating-linear-gradient(
+                90deg,
+                rgba(0,0,0,0.1) 0px,
+                rgba(0,0,0,0.1) 2px,
+                transparent 2px,
+                transparent 4px
+            );
+        }
+
+        /* Barcode on ID */
+        .id-barcode {
+            position: absolute;
+            bottom: 15px;
+            right: 20px;
+            width: 80px;
+            height: 25px;
+            background: repeating-linear-gradient(
+                90deg,
+                #fff 0px,
+                #fff 2px,
+                #000 2px,
+                #000 4px,
+                #fff 4px,
+                #fff 5px,
+                #000 5px,
+                #000 8px,
+                #fff 8px,
+                #fff 10px
+            );
+            border-radius: 2px;
+        }
+
+        .id-card-content {
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            height: 100%;
+        }
+
+        .id-photo {
+            width: 120px;
+            height: 120px;
+            border-radius: 10px;
+            border: 3px solid var(--card-border);
+            object-fit: cover;
+            box-shadow: 0 5px 15px rgba(0, 255, 65, 0.3);
+        }
+
+        .id-info {
+            flex: 1;
+        }
+
+        .id-info h2 {
+            color: var(--terminal-success);
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            text-shadow: 0 0 10px var(--terminal-success);
+        }
+
+        .id-info p {
+            color: var(--terminal-info);
+            margin: 5px 0;
+            font-size: 0.9rem;
+        }
+
+        /* Lanyard connecting ID card to hook - goes UPWARD */
+        .lanyard-top {
+            width: 80px;
+            height: 100px;
+            position: relative;
+            display: flex;
+            justify-content: center;
+        }
+
+        .lanyard-strap-top {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            overflow: visible;
+        }
+
+        .strap-path-top {
+            fill: none;
+            stroke: url(#strapGradientTop);
+            stroke-width: 12;
+            stroke-linecap: round;
+            filter: drop-shadow(2px 2px 3px rgba(0,0,0,0.3));
+        }
+
+        /* Clip that attaches to the ID card */
+        .id-clip {
+            width: 40px;
+            height: 25px;
+            background: linear-gradient(180deg, #c0c0c0 0%, #808080 50%, #a0a0a0 100%);
+            border-radius: 5px 5px 0 0;
+            position: relative;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+            margin-bottom: -2px;
+        }
+
+        .id-clip::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 30px;
+            height: 8px;
+            background: linear-gradient(180deg, #909090 0%, #606060 100%);
+            border-radius: 0 0 3px 3px;
+        }
+
+        /* Simple pull hint below card */
+        .pull-hint {
+            position: absolute;
+            bottom: -50px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            pointer-events: none;
+        }
+
+        .pull-hint-arrows {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+        }
+
+        .pull-hint-arrow {
+            font-size: 1.2rem;
+            color: var(--terminal-success);
+            text-shadow: 0 0 15px var(--terminal-success);
+            opacity: 0;
+            animation: arrowFall 2s ease-in-out infinite;
+        }
+
+        .pull-hint-arrow:nth-child(1) { animation-delay: 0s; }
+        .pull-hint-arrow:nth-child(2) { animation-delay: 0.2s; }
+        .pull-hint-arrow:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes arrowFall {
+            0% { opacity: 0; transform: translateY(-10px); }
+            50% { opacity: 1; transform: translateY(5px); }
+            100% { opacity: 0; transform: translateY(15px); }
+        }
+
+        .pull-hint-text {
+            font-size: 0.7rem;
+            color: var(--terminal-info);
+            letter-spacing: 3px;
+            margin-top: 10px;
+            text-transform: uppercase;
+            animation: textPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes textPulse {
+            0%, 100% { opacity: 0.4; }
+            50% { opacity: 1; }
+        }
+
+        /* Floating particles effect */
+        .particles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: var(--terminal-success);
+            border-radius: 50%;
+            opacity: 0;
+            animation: floatUp 3s infinite;
+        }
+
+        .particle:nth-child(1) { left: 20%; animation-delay: 0s; }
+        .particle:nth-child(2) { left: 40%; animation-delay: 0.5s; }
+        .particle:nth-child(3) { left: 60%; animation-delay: 1s; }
+        .particle:nth-child(4) { left: 80%; animation-delay: 1.5s; }
+        .particle:nth-child(5) { left: 30%; animation-delay: 2s; }
+        .particle:nth-child(6) { left: 70%; animation-delay: 2.5s; }
+
+        @keyframes floatUp {
+            0% { bottom: 0; opacity: 0; transform: scale(0); }
+            20% { opacity: 1; transform: scale(1); }
+            80% { opacity: 1; }
+            100% { bottom: 100%; opacity: 0; transform: scale(0); }
+        }
+
+        /* Shake animation when almost ready to unhook */
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-3px) rotate(-1deg); }
+            75% { transform: translateX(3px) rotate(1deg); }
+        }
+
+        /* Instruction text animation */
+        .hanger-subtitle {
+            animation: fadeInOut 3s ease-in-out infinite;
+        }
+
+        @keyframes fadeInOut {
+            0%, 100% { opacity: 0.6; }
+            50% { opacity: 1; }
+        }
+
+        /* ===== 3D GUIDE CHARACTER ===== */
+        .guide-character {
+            position: fixed;
+            bottom: 0;
+            right: 20px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            pointer-events: auto;
+        }
+
+        /* Speech bubble */
+        .speech-bubble {
+            background: rgba(22, 33, 62, 0.95);
+            border: 2px solid var(--terminal-info);
+            border-radius: 15px;
+            padding: 15px 20px;
+            margin-bottom: 10px;
+            max-width: 260px;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0, 217, 255, 0.3);
+            animation: bubblePop 0.5s ease-out;
+            margin-left: 20px;
+        }
+
+        @keyframes bubblePop {
+            0% { transform: scale(0); opacity: 0; }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .speech-bubble::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            right: 80px;
+            width: 0;
+            height: 0;
+            border-left: 10px solid transparent;
+            border-right: 10px solid transparent;
+            border-top: 10px solid var(--terminal-info);
+        }
+
+        .speech-bubble::before {
+            content: '';
+            position: absolute;
+            bottom: -6px;
+            right: 82px;
+            width: 0;
+            height: 0;
+            border-left: 8px solid transparent;
+            border-right: 8px solid transparent;
+            border-top: 8px solid rgba(22, 33, 62, 0.95);
+            z-index: 1;
+        }
+
+        .speech-text {
+            color: var(--terminal-info);
+            font-size: 0.85rem;
+            line-height: 1.5;
+        }
+
+        .speech-text .highlight {
+            color: var(--terminal-success);
+            font-weight: bold;
+        }
+
+        /* 3D Model Container */
+        .character-3d {
+            width: 280px;
+            height: 380px;
+            position: relative;
+            overflow: hidden;
+            border-radius: 0;
+        }
+
+        .character-3d iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            pointer-events: auto;
+        }
+
+        /* Glowing platform under the 3D model */
+        .character-platform {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 150px;
+            height: 20px;
+            background: radial-gradient(ellipse at center, rgba(0, 255, 65, 0.4) 0%, transparent 70%);
+            filter: blur(10px);
+            animation: platformGlow 2s ease-in-out infinite;
+        }
+
+        @keyframes platformGlow {
+            0%, 100% { opacity: 0.5; transform: translateX(-50%) scale(1); }
+            50% { opacity: 1; transform: translateX(-50%) scale(1.2); }
+        }
+
+        /* Guide content wrapper */
+        .guide-content {
+            display: flex;
+            flex-direction: row-reverse;
+            align-items: flex-end;
+            gap: 15px;
+        }
+
+        /* Command Panel Toggle Button */
+        .guide-commands-toggle {
+            display: none;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--terminal-info), #0066cc);
+            border: 2px solid var(--terminal-info);
+            color: white;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 5px 20px rgba(0, 217, 255, 0.4);
+            transition: all 0.3s ease;
+            align-self: flex-end;
+            margin-bottom: 10px;
+        }
+
+        .guide-commands-toggle:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 25px rgba(0, 217, 255, 0.6);
+        }
+
+        .guide-commands-toggle.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .toggle-icon {
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        /* Command Panel next to character */
+        .guide-commands {
+            display: none;
+            flex-direction: column;
+            gap: 8px;
+            background: rgba(22, 33, 62, 0.95);
+            border: 2px solid var(--terminal-info);
+            border-radius: 12px;
+            padding: 12px;
+            min-width: 140px;
+            box-shadow: 0 5px 20px rgba(0, 217, 255, 0.3);
+            animation: popIn 0.3s ease-out;
+        }
+
+        @keyframes popIn {
+            from {
+                opacity: 0;
+                transform: scale(0.8) translateX(20px);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) translateX(0);
+            }
+        }
+
+        .guide-commands.active {
+            display: flex;
+        }
+
+        .guide-commands-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 5px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid rgba(0, 217, 255, 0.3);
+        }
+
+        .guide-commands-title {
+            color: var(--terminal-info);
+            font-size: 0.75rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .guide-commands-close {
+            background: none;
+            border: none;
+            color: var(--terminal-info);
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 0 5px;
+            line-height: 1;
+            transition: all 0.2s ease;
+        }
+
+        .guide-commands-close:hover {
+            color: var(--terminal-error);
+            transform: scale(1.2);
+        }
+
+        .guide-cmd {
+            color: var(--terminal-success);
+            font-family: 'Fira Code', monospace;
+            font-size: 0.85rem;
+            padding: 8px 12px;
+            background: rgba(0, 255, 65, 0.1);
+            border: 1px solid rgba(0, 255, 65, 0.3);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .guide-cmd:hover {
+            background: rgba(0, 255, 65, 0.25);
+            border-color: var(--terminal-success);
+            transform: translateX(5px);
+            box-shadow: 0 0 10px rgba(0, 255, 65, 0.4);
+        }
+
+        .guide-cmd::before {
+            content: '$ ';
+            color: var(--terminal-info);
+        }
+
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        /* ===== DECORATIVE ELEMENTS ===== */
+        .floating-icons {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .floating-icon {
+            position: absolute;
+            font-size: 1.5rem;
+            opacity: 0.3;
+            animation: floatAround 15s linear infinite;
+        }
+
+        .floating-icon:nth-child(1) { top: 20%; left: 10%; animation-delay: 0s; animation-duration: 20s; }
+        .floating-icon:nth-child(2) { top: 60%; left: 85%; animation-delay: 2s; animation-duration: 18s; }
+        .floating-icon:nth-child(3) { top: 80%; left: 20%; animation-delay: 4s; animation-duration: 22s; }
+        .floating-icon:nth-child(4) { top: 30%; left: 75%; animation-delay: 6s; animation-duration: 16s; }
+        .floating-icon:nth-child(5) { top: 70%; left: 60%; animation-delay: 8s; animation-duration: 19s; }
+        .floating-icon:nth-child(6) { top: 15%; left: 40%; animation-delay: 10s; animation-duration: 21s; }
+
+        @keyframes floatAround {
+            0% { transform: translateY(0) rotate(0deg); opacity: 0.2; }
+            25% { transform: translateY(-30px) rotate(90deg); opacity: 0.4; }
+            50% { transform: translateY(0) rotate(180deg); opacity: 0.2; }
+            75% { transform: translateY(30px) rotate(270deg); opacity: 0.4; }
+            100% { transform: translateY(0) rotate(360deg); opacity: 0.2; }
+        }
+
+        /* Scanning lines effect */
+        .scan-lines {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(
+                0deg,
+                transparent,
+                transparent 2px,
+                rgba(0, 255, 65, 0.03) 2px,
+                rgba(0, 255, 65, 0.03) 4px
+            );
+            pointer-events: none;
+            z-index: 999;
+            animation: scanMove 8s linear infinite;
+        }
+
+        @keyframes scanMove {
+            0% { background-position: 0 0; }
+            100% { background-position: 0 100px; }
+        }
+
+        /* Corner decorations */
+        .corner-decor {
+            position: fixed;
+            width: 100px;
+            height: 100px;
+            border: 2px solid var(--terminal-success);
+            opacity: 0.3;
+            pointer-events: none;
+        }
+
+        .corner-decor.top-left {
+            top: 20px;
+            left: 20px;
+            border-right: none;
+            border-bottom: none;
+        }
+
+        .corner-decor.top-right {
+            top: 20px;
+            right: 20px;
+            border-left: none;
+            border-bottom: none;
+        }
+
+        .corner-decor.bottom-left {
+            bottom: 20px;
+            left: 20px;
+            border-right: none;
+            border-top: none;
+        }
+
+        .corner-decor.bottom-right {
+            bottom: 20px;
+            right: 20px;
+            border-left: none;
+            border-top: none;
+        }
+
+        /* Status bar at bottom */
+        .status-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 25px;
+            background: rgba(22, 33, 62, 0.9);
+            border-top: 1px solid var(--terminal-success);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            font-size: 0.7rem;
+            color: var(--terminal-info);
+            z-index: 1000;
+        }
+
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .status-dot {
+            width: 6px;
+            height: 6px;
+            background: var(--terminal-success);
+            border-radius: 50%;
+            animation: statusPulse 2s infinite;
+        }
+
+        @keyframes statusPulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.6; }
+            50% { opacity: 1; }
+        }
+
+        /* Terminal Section */
+        .terminal-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+            z-index: 500;
+        }
+
+        .terminal-container.active {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+        }
+
+        .terminal-header {
+            background: #16213e;
+            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 2px solid var(--terminal-success);
+        }
+
+        .terminal-button {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        .btn-close { background: #ff5f56; }
+        .btn-minimize { background: #ffbd2e; }
+        .btn-maximize { background: #27c93f; }
+
+        .terminal-title {
+            flex: 1;
+            text-align: center;
+            color: var(--terminal-info);
+            font-size: 0.9rem;
+        }
+
+        .terminal-body {
+            flex: 1;
+            padding: 20px;
+            padding-bottom: 100px; /* Space for fixed input at bottom */
+            overflow-y: auto;
+            background: var(--terminal-bg);
+        }
+
+        .terminal-output {
+            min-height: 100%;
+        }
+
+        /* Fixed input at bottom - only visible when terminal is active */
+        .terminal-input-container {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--terminal-bg);
+            border-top: 1px solid var(--terminal-success);
+            padding: 15px 20px;
+            z-index: 100;
+            display: none; /* Hidden by default */
+        }
+
+        .terminal-container.active .terminal-input-container {
+            display: block;
+        }
+
+        .terminal-line {
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+
+        .prompt {
+            color: var(--terminal-prompt);
+        }
+
+        .command {
+            color: var(--terminal-success);
+        }
+
+        .output {
+            color: #ffffff;
+            margin-left: 20px;
+        }
+
+        .error {
+            color: var(--terminal-error);
+            margin-left: 20px;
+        }
+
+        .success {
+            color: var(--terminal-success);
+        }
+
+        .info {
+            color: var(--terminal-info);
+        }
+
+        .warning {
+            color: #ffbd2e;
+        }
+
+        .terminal-input-line {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        #terminal-input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: var(--terminal-success);
+            font-family: 'Courier New', monospace;
+            font-size: 1rem;
+            outline: none;
+            caret-color: var(--terminal-success);
+        }
+
+        #terminal-input::placeholder {
+            color: rgba(0, 255, 65, 0.3);
+        }
+
+        .input-hint {
+            font-size: 0.75rem;
+            color: rgba(0, 217, 255, 0.5);
+            margin-top: 8px;
+            text-align: center;
+        }
+
+        .cursor {
+            display: inline-block;
+            width: 10px;
+            height: 18px;
+            background: var(--terminal-success);
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0%, 49% { opacity: 1; }
+            50%, 100% { opacity: 0; }
+        }
+
+        /* Skill badges in terminal */
+        .skill-badge {
+            display: inline-block;
+            background: rgba(0, 255, 65, 0.1);
+            border: 1px solid var(--terminal-success);
+            color: var(--terminal-success);
+            padding: 5px 10px;
+            margin: 3px;
+            border-radius: 5px;
+            font-size: 0.85rem;
+        }
+
+        /* Project cards in terminal */
+        .project-card-terminal {
+            border: 1px solid var(--terminal-info);
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            background: rgba(0, 217, 255, 0.05);
+        }
+
+        .project-card-terminal h3 {
+            color: var(--terminal-info);
+            margin-bottom: 10px;
+        }
+
+        .project-card-terminal p {
+            color: #ffffff;
+            margin-bottom: 10px;
+        }
+
+        .project-tag {
+            display: inline-block;
+            background: rgba(0, 217, 255, 0.2);
+            border: 1px solid var(--terminal-info);
+            color: var(--terminal-info);
+            padding: 3px 8px;
+            margin: 3px;
+            border-radius: 3px;
+            font-size: 0.75rem;
+        }
+
+        /* ASCII Art */
+        .ascii-art {
+            color: var(--terminal-success);
+            line-height: 1.2;
+            font-size: 0.8rem;
+        }
+
+        /* Help panel */
+        .help-panel {
+            border: 1px solid var(--terminal-success);
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            background: rgba(0, 255, 65, 0.05);
+        }
+
+        /* Section header box */
+        .section-header {
+            border: 2px solid var(--terminal-success);
+            padding: 10px 20px;
+            margin: 10px 0;
+            text-align: center;
+            color: var(--terminal-success);
+            font-weight: bold;
+            letter-spacing: 2px;
+            background: rgba(0, 255, 65, 0.05);
+        }
+
+        .help-command {
+            color: var(--terminal-info);
+            font-weight: bold;
+        }
+
+        .help-description {
+            color: #ffffff;
+            margin-left: 20px;
+        }
+
+        /* Matrix rain effect */
+        #matrix-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.15;
+        }
+
+        /* Typing effect */
+        .typing {
+            overflow: hidden;
+            border-right: 2px solid var(--terminal-success);
+            white-space: nowrap;
+            animation: typing 2s steps(40) 1s forwards, blink-caret 0.75s step-end infinite;
+        }
+
+        @keyframes typing {
+            from { width: 0; }
+            to { width: 100%; }
+        }
+
+        @keyframes blink-caret {
+            from, to { border-color: transparent; }
+            50% { border-color: var(--terminal-success); }
+        }
+
+        /* Scrollbar styling */
+        .terminal-body::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        .terminal-body::-webkit-scrollbar-track {
+            background: #16213e;
+        }
+
+        .terminal-body::-webkit-scrollbar-thumb {
+            background: var(--terminal-success);
+            border-radius: 5px;
+        }
+
+        .terminal-body::-webkit-scrollbar-thumb:hover {
+            background: var(--terminal-info);
+        }
+
+        /* Easter egg - glitch effect */
+        .glitch {
+            animation: glitch 0.3s infinite;
+        }
+
+        @keyframes glitch {
+            0% { transform: translate(0); }
+            20% { transform: translate(-2px, 2px); }
+            40% { transform: translate(-2px, -2px); }
+            60% { transform: translate(2px, 2px); }
+            80% { transform: translate(2px, -2px); }
+            100% { transform: translate(0); }
+        }
+
+        /* Command history indicator */
+        .history-indicator {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            color: var(--terminal-info);
+            font-size: 0.8rem;
+            opacity: 0.6;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hanger-title {
+                font-size: 1.3rem;
+                letter-spacing: 2px;
+            }
+
+            .hanger-subtitle {
+                font-size: 0.75rem;
+            }
+
+            .hanger-bar {
+                padding: 15px 0;
+            }
+
+            .id-card {
+                width: 100%;
+                max-width: 340px;
+                height: 220px;
+            }
+
+            .id-photo {
+                width: 85px;
+                height: 85px;
+            }
+
+            .id-info h2 {
+                font-size: 1.15rem;
+            }
+
+            .id-info p {
+                font-size: 0.75rem;
+            }
+
+            .lanyard-top {
+                height: 80px;
+                width: 60px;
+            }
+
+            .strap-path-top {
+                stroke-width: 10;
+            }
+
+            .pull-hint-arrow {
+                font-size: 1rem;
+            }
+
+            .pull-hint-text {
+                font-size: 0.6rem;
+            }
+
+            .id-clip {
+                width: 35px;
+                height: 20px;
+            }
+
+            .terminal-body {
+                font-size: 0.8rem;
+                padding: 10px;
+                padding-bottom: 100px; /* Space for fixed input */
+            }
+
+            .guide-commands {
+                min-width: 100px;
+                padding: 8px;
+            }
+
+            .guide-cmd {
+                font-size: 0.75rem;
+                padding: 6px 8px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hanger-title {
+                font-size: 1rem;
+                letter-spacing: 1px;
+            }
+
+            .hanger-subtitle {
+                font-size: 0.65rem;
+            }
+
+            .hanger-bar {
+                padding: 12px 0;
+            }
+
+            .hanger-hook {
+                width: 40px;
+                height: 40px;
+                bottom: -20px;
+            }
+
+            .id-card {
+                max-width: 300px;
+                height: 200px;
+            }
+
+            .id-photo {
+                width: 70px;
+                height: 70px;
+            }
+
+            .id-info h2 {
+                font-size: 1rem;
+            }
+
+            .id-info p {
+                font-size: 0.7rem;
+            }
+
+            .lanyard-top {
+                height: 60px;
+                width: 50px;
+            }
+
+            .strap-path-top {
+                stroke-width: 8;
+            }
+
+            .pull-hint-text {
+                font-size: 0.5rem;
+            }
+
+            .pull-hint-arrow {
+                font-size: 0.8rem;
+            }
+
+            .id-clip {
+                width: 30px;
+                height: 18px;
+            }
+
+            .pull-hint {
+                bottom: -40px;
+            }
+
+            /* Guide character mobile */
+            .guide-character {
+                bottom: 35px;
+                right: 10px;
+                transform: scale(0.7);
+                transform-origin: bottom right;
+            }
+
+            .speech-bubble {
+                max-width: 200px;
+                padding: 10px 15px;
+            }
+
+            .speech-text {
+                font-size: 0.75rem;
+            }
+
+            .guide-content {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .guide-commands {
+                min-width: 120px;
+                padding: 8px;
+            }
+
+            .guide-cmd {
+                font-size: 0.7rem;
+                padding: 5px 8px;
+            }
+
+            .character-3d {
+                width: 200px;
+                height: 280px;
+            }
+
+            /* Hide floating icons on small screens */
+            .floating-icons {
+                display: none;
+            }
+
+            .corner-decor {
+                width: 50px;
+                height: 50px;
+            }
+        }
+
+        /* Loading screen */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--terminal-bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease;
+        }
+
+        .loading-screen.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .loading-text {
+            color: var(--terminal-success);
+            font-size: 1.5rem;
+            animation: pulse 1.5s infinite;
+        }
+
+        /* GUI Container */
+        .gui-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background: var(--terminal-bg);
+            display: flex;
+            flex-direction: column;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+            z-index: 2000;
+        }
+
+        .gui-container.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .gui-header {
+            background: #16213e;
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            border-bottom: 2px solid var(--terminal-success);
+        }
+
+        .back-to-terminal {
+            background: var(--terminal-success);
+            color: var(--terminal-bg);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .back-to-terminal:hover {
+            background: var(--terminal-info);
+            transform: translateX(-5px);
+        }
+
+        .gui-title {
+            color: var(--terminal-info);
+            font-size: 1.1rem;
+        }
+
+        #guiFrame {
+            flex: 1;
+            width: 100%;
+            height: 100%;
+            border: none;
+            background: white;
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div class="loading-screen" id="loadingScreen">
+        <div class="loading-text">Initializing Terminal...</div>
+    </div>
+
+    <!-- Matrix rain background -->
+    <canvas id="matrix-canvas"></canvas>
+
+    <!-- Scan lines effect -->
+    <div class="scan-lines"></div>
+
+    <!-- Corner decorations -->
+    <div class="corner-decor top-left"></div>
+    <div class="corner-decor top-right"></div>
+    <div class="corner-decor bottom-left"></div>
+    <div class="corner-decor bottom-right"></div>
+
+    <!-- Floating tech icons -->
+    <div class="floating-icons" id="floatingIcons">
+        <div class="floating-icon">⚡</div>
+        <div class="floating-icon">💻</div>
+        <div class="floating-icon">🔧</div>
+        <div class="floating-icon">☕</div>
+        <div class="floating-icon">🚀</div>
+        <div class="floating-icon">&lt;/&gt;</div>
+    </div>
+
+    <!-- Status bar -->
+    <div class="status-bar" id="statusBar">
+        <div class="status-item">
+            <span class="status-dot"></span>
+            <span>SYSTEM ONLINE</span>
+        </div>
+        <div class="status-item">
+            <span id="currentTime"></span>
+        </div>
+        <div class="status-item">
+            <span>v2.0.0</span>
+        </div>
+    </div>
+
+    <!-- Hanger Container with ID Card -->
+    <div class="hanger-container" id="hangerContainer">
+        <!-- Floating particles -->
+        <div class="particles">
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+        </div>
+
+        <!-- The Hanger Bar -->
+        <div class="hanger-bar">
+            <div class="hanger-title">WELCOME TO MY PORTFOLIO</div>
+            <div class="hanger-subtitle">Pull the ID card to enter terminal</div>
+            <!-- Hook SVG -->
+            <div class="hanger-hook">
+                <svg class="hook-svg" viewBox="0 0 50 50">
+                    <path class="hook-path" d="M25 0 L25 25 Q25 40, 25 45"/>
+                    <circle cx="25" cy="45" r="4" fill="var(--terminal-success)"/>
+                </svg>
+            </div>
+        </div>
+
+        <!-- ID Card Container - hangs from the hook -->
+        <div class="id-card-container" id="idCardContainer">
+            <!-- Lanyard going UP to the hook -->
+            <div class="lanyard-top">
+                <svg class="lanyard-strap-top" viewBox="0 0 80 100">
+                    <defs>
+                        <linearGradient id="strapGradientTop" x1="0%" y1="0%" x2="100%" y2="0%">
+                            <stop offset="0%" style="stop-color:#00aa30"/>
+                            <stop offset="20%" style="stop-color:#00ff41"/>
+                            <stop offset="40%" style="stop-color:#00cc35"/>
+                            <stop offset="60%" style="stop-color:#00ff41"/>
+                            <stop offset="80%" style="stop-color:#00cc35"/>
+                            <stop offset="100%" style="stop-color:#00aa30"/>
+                        </linearGradient>
+                    </defs>
+                    <!-- Lanyard path going up with slight curve -->
+                    <path class="strap-path-top" d="M40 100 Q35 50, 40 0"/>
+                </svg>
+            </div>
+
+            <!-- Metal clip attaching lanyard to card -->
+            <div class="id-clip"></div>
+
+            <!-- The ID Card -->
+            <div class="id-card" id="idCard">
+                <!-- Smart chip -->
+                <div class="id-chip"></div>
+
+                <div class="id-card-content">
+                    <img src="santosh-photo.jpg" alt="Santosh Dahit" class="id-photo">
+                    <div class="id-info">
+                        <h2>SANTOSH DAHIT</h2>
+                        <p>🔹 Backend Engineer</p>
+                        <p>🔹 Spring Boot Expert</p>
+                        <p>🔹 ID: DEV-2024-SD</p>
+                        <p>🔹 Status: <span class="success">ACTIVE</span></p>
+                    </div>
+                </div>
+
+                <!-- Barcode -->
+                <div class="id-barcode"></div>
+
+                <!-- Pull hint below the card -->
+                <div class="pull-hint">
+                    <div class="pull-hint-arrows">
+                        <span class="pull-hint-arrow">▼</span>
+                        <span class="pull-hint-arrow">▼</span>
+                        <span class="pull-hint-arrow">▼</span>
+                    </div>
+                    <span class="pull-hint-text">Pull Down</span>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Guide Character with Command Panel (outside hanger for visibility in terminal) -->
+    <div class="guide-character" id="guideCharacter">
+        <div class="speech-bubble" id="speechBubble">
+            <div class="speech-text" id="speechText">
+                Hi there! 👋 Welcome to <span class="highlight">Santosh's Portfolio</span>!
+            </div>
+        </div>
+        <div class="guide-content">
+            <div class="character-3d">
+                <iframe title="Racing Miku 2014 Ver." frameborder="0" allowfullscreen mozallowfullscreen="true" webkitallowfullscreen="true" allow="autoplay; fullscreen; xr-spatial-tracking" src="https://sketchfab.com/models/c8dde6948d3b4dd88ee06b5ee15b2e20/embed?autostart=1&ui_theme=dark&ui_infos=0&ui_controls=0&ui_stop=0"></iframe>
+                <div class="character-platform"></div>
+            </div>
+            <!-- Command Panel Toggle Button -->
+            <button class="guide-commands-toggle" id="guideCommandsToggle" title="Show Commands">
+                <span class="toggle-icon">?</span>
+            </button>
+            <!-- Command Panel next to character (visible in terminal mode) -->
+            <div class="guide-commands" id="guideCommands">
+                <div class="guide-commands-header">
+                    <div class="guide-commands-title">Try these commands:</div>
+                    <button class="guide-commands-close" id="guideCommandsClose">&times;</button>
+                </div>
+                <div class="guide-cmd" data-cmd="help">help</div>
+                <div class="guide-cmd" data-cmd="about">about</div>
+                <div class="guide-cmd" data-cmd="skills">skills</div>
+                <div class="guide-cmd" data-cmd="projects">projects</div>
+                <div class="guide-cmd" data-cmd="contact">contact</div>
+                <div class="guide-cmd" data-cmd="easter-egg">easter-egg</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Terminal Container -->
+    <div class="terminal-container" id="terminalContainer">
+        <div class="terminal-header">
+            <div class="terminal-button btn-close"></div>
+            <div class="terminal-button btn-minimize"></div>
+            <div class="terminal-button btn-maximize"></div>
+            <div class="terminal-title">santosh@portfolio:~$</div>
+        </div>
+        <div class="terminal-body">
+            <div class="terminal-output" id="terminalBody">
+                <!-- Terminal output will be added here -->
+            </div>
+        </div>
+        <!-- Fixed input at bottom -->
+        <div class="terminal-input-container" id="terminalInputContainer">
+            <div class="terminal-input-line">
+                <span class="prompt">santosh@portfolio:~$</span>
+                <input type="text" id="terminal-input" autocomplete="off" autofocus placeholder="Type a command...">
+            </div>
+            <div class="input-hint">↑↓ history • TAB autocomplete • Type 'help' for commands</div>
+        </div>
+    </div>
+
+    <!-- GUI Portfolio Container -->
+    <div class="gui-container" id="guiContainer">
+        <div class="gui-header">
+            <button class="back-to-terminal" id="backToTerminal">
+                ← Back to Terminal Mode
+            </button>
+            <div class="gui-title">Normal Portfolio View</div>
+        </div>
+        <iframe id="guiFrame" src="portfolio.html" frameborder="0"></iframe>
+    </div>
+
+
+    <script>
+        // Matrix rain effect
+        const canvas = document.getElementById('matrix-canvas');
+        const ctx = canvas.getContext('2d');
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const matrix = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*()_+-=[]{}|;:,.<>?";
+        const fontSize = 16;
+        const columns = canvas.width / fontSize;
+        const drops = Array(Math.floor(columns)).fill(1);
+
+        function drawMatrix() {
+            ctx.fillStyle = 'rgba(10, 14, 39, 0.05)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            ctx.fillStyle = '#00ff41';
+            ctx.font = fontSize + 'px monospace';
+            
+            for (let i = 0; i < drops.length; i++) {
+                const text = matrix[Math.floor(Math.random() * matrix.length)];
+                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+                
+                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                    drops[i] = 0;
+                }
+                drops[i]++;
+            }
+        }
+
+        setInterval(drawMatrix, 35);
+
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+
+        // Terminal functionality
+        const terminalBody = document.getElementById('terminalBody');
+        const hangerContainer = document.getElementById('hangerContainer');
+        const idCardContainer = document.getElementById('idCardContainer');
+        const terminalContainer = document.getElementById('terminalContainer');
+        const loadingScreen = document.getElementById('loadingScreen');
+        const guiContainer = document.getElementById('guiContainer');
+        const backToTerminalBtn = document.getElementById('backToTerminal');
+        const guideCommands = document.getElementById('guideCommands');
+        const guideCommandsToggle = document.getElementById('guideCommandsToggle');
+
+        let commandHistory = [];
+        let historyIndex = -1;
+        let currentInput = '';
+
+        // Back to terminal button
+        backToTerminalBtn.addEventListener('click', switchToTerminal);
+
+        // Make guide command buttons clickable to execute commands
+        document.querySelectorAll('.guide-cmd').forEach(cmd => {
+            cmd.addEventListener('click', () => {
+                const command = cmd.getAttribute('data-cmd');
+                const input = document.getElementById('terminal-input');
+                if (input && command) {
+                    input.value = command;
+                    processCommand(command);
+                    input.value = '';
+                }
+            });
+        });
+
+        // Toggle command panel visibility
+        const guideCommandsClose = document.getElementById('guideCommandsClose');
+
+        if (guideCommandsToggle && guideCommands) {
+            guideCommandsToggle.addEventListener('click', () => {
+                guideCommands.classList.add('active');
+                guideCommandsToggle.style.display = 'none';
+            });
+        }
+
+        if (guideCommandsClose && guideCommands && guideCommandsToggle) {
+            guideCommandsClose.addEventListener('click', () => {
+                guideCommands.classList.remove('active');
+                guideCommandsToggle.style.display = 'flex';
+            });
+        }
+
+        function switchToGUI() {
+            addToTerminal(`
+                <div class="terminal-line">
+                    <span class="info">🎨 Switching to GUI mode...</span>
+                </div>
+                <div class="terminal-line">
+                    <span class="success">✓ Loading normal portfolio view</span>
+                </div>
+                <br>
+            `);
+
+            setTimeout(() => {
+                terminalContainer.classList.remove('active');
+                guiContainer.classList.add('active');
+                // Hide guide character in GUI mode
+                const guideChar = document.getElementById('guideCharacter');
+                if (guideChar) guideChar.style.display = 'none';
+            }, 1000);
+        }
+
+        function switchToTerminal() {
+            guiContainer.classList.remove('active');
+            terminalContainer.classList.add('active');
+            // Show guide character back in terminal mode
+            const guideChar = document.getElementById('guideCharacter');
+            if (guideChar) guideChar.style.display = 'flex';
+
+            addToTerminal(`
+                <div class="terminal-line">
+                    <span class="info">💻 Welcome back to terminal mode!</span>
+                </div>
+                <div class="terminal-line">
+                    <span class="success">Type 'help' to see available commands</span>
+                </div>
+                <br>
+            `);
+            
+            // Focus on input
+            const input = document.getElementById('terminal-input');
+            if (input) input.focus();
+        }
+
+        // Hide loading screen after 2 seconds
+        setTimeout(() => {
+            loadingScreen.classList.add('hidden');
+        }, 2000);
+
+        // ID Card drag functionality with elastic effect
+        let isDragging = false;
+        let hasDragged = false;
+        let startY = 0;
+        let currentY = 0;
+        const idCard = document.getElementById('idCard');
+        const pullThreshold = 150; // Distance needed to trigger terminal
+        const maxStretch = 200; // Maximum stretch distance
+
+        // ===== MOUSE-FOLLOWING SWING =====
+        let mouseX = 0;
+        let mouseY = 0;
+        let cardRotateX = 0;
+        let cardRotateY = 0;
+        let isMouseOverCard = false;
+
+        // Track mouse position
+        document.addEventListener('mousemove', (e) => {
+            if (isDragging || hangerContainer.classList.contains('hidden')) return;
+
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+
+            // Get card position
+            const cardRect = idCardContainer.getBoundingClientRect();
+            const cardCenterX = cardRect.left + cardRect.width / 2;
+            const cardCenterY = cardRect.top + cardRect.height / 2;
+
+            // Calculate distance from card center
+            const deltaX = mouseX - cardCenterX;
+            const deltaY = mouseY - cardCenterY;
+
+            // Calculate rotation based on mouse position (max ±15 degrees)
+            const maxRotation = 12;
+            const distanceThreshold = 500;
+
+            // Smooth rotation calculation
+            cardRotateY = (deltaX / distanceThreshold) * maxRotation;
+            cardRotateX = -(deltaY / distanceThreshold) * maxRotation;
+
+            // Clamp values
+            cardRotateY = Math.max(-maxRotation, Math.min(maxRotation, cardRotateY));
+            cardRotateX = Math.max(-maxRotation, Math.min(maxRotation, cardRotateX));
+
+            // Apply rotation to card container if not dragging
+            if (!isDragging) {
+                idCardContainer.style.transform = `rotateX(${cardRotateX}deg) rotateY(${cardRotateY}deg)`;
+                idCardContainer.style.animation = 'none';
+
+                // Also tilt the lanyard slightly
+                const lanyardTop = idCardContainer.querySelector('.lanyard-top');
+                if (lanyardTop) {
+                    lanyardTop.style.transform = `rotateY(${cardRotateY * 0.3}deg)`;
+                }
+            }
+        });
+
+        // Reset rotation when mouse leaves the area
+        hangerContainer.addEventListener('mouseleave', () => {
+            if (!isDragging) {
+                idCardContainer.style.transition = 'transform 0.5s ease-out';
+                idCardContainer.style.transform = 'rotateX(0deg) rotateY(0deg)';
+                idCardContainer.style.animation = 'swayHanging 4s ease-in-out infinite';
+
+                const lanyardTop = idCardContainer.querySelector('.lanyard-top');
+                if (lanyardTop) {
+                    lanyardTop.style.transform = 'rotateY(0deg)';
+                }
+
+                setTimeout(() => {
+                    idCardContainer.style.transition = '';
+                }, 500);
+            }
+        });
+
+        function applyElasticEffect(deltaY) {
+            const lanyardTop = idCardContainer.querySelector('.lanyard-top');
+            const strapPath = idCardContainer.querySelector('.strap-path-top');
+            const strapSvg = idCardContainer.querySelector('.lanyard-strap-top');
+
+            const baseHeight = 100;
+
+            if (deltaY <= 0) {
+                idCardContainer.style.transform = `rotateX(${cardRotateX}deg) rotateY(${cardRotateY}deg)`;
+                if (lanyardTop) lanyardTop.style.height = `${baseHeight}px`;
+                return;
+            }
+
+            // Elastic resistance - the further you pull, the harder it gets
+            const resistance = 0.6;
+            const elasticY = deltaY * resistance;
+
+            // Move the entire ID card container down while keeping some tilt
+            idCardContainer.style.transform = `translateY(${elasticY}px) rotateX(${cardRotateX * 0.5}deg) rotateY(${cardRotateY * 0.5}deg)`;
+            idCardContainer.style.animation = 'none';
+
+            // Stretch the lanyard upward
+            if (lanyardTop) {
+                const newHeight = baseHeight + elasticY * 0.8;
+                lanyardTop.style.height = `${newHeight}px`;
+
+                // Update SVG viewBox and path for stretching effect
+                if (strapSvg) {
+                    strapSvg.setAttribute('viewBox', `0 0 80 ${newHeight}`);
+                }
+                if (strapPath) {
+                    // Stretch the path
+                    strapPath.setAttribute('d', `M40 ${newHeight} Q35 ${newHeight/2}, 40 0`);
+                }
+            }
+
+            // Visual feedback - card glows more as you pull
+            const progress = Math.min(deltaY / pullThreshold, 1);
+            idCard.style.boxShadow = `
+                0 ${20 + progress * 30}px ${60 + progress * 40}px rgba(0, 255, 65, ${0.3 + progress * 0.4}),
+                0 0 ${30 + progress * 50}px rgba(0, 255, 65, ${progress * 0.5}),
+                inset 0 1px 0 rgba(255,255,255,0.1)
+            `;
+
+            // Add shake effect when almost there
+            if (progress > 0.8 && progress < 1) {
+                idCard.style.animation = 'shake 0.1s infinite';
+            } else {
+                idCard.style.animation = 'none';
+            }
+        }
+
+        function resetElastic() {
+            const lanyardTop = idCardContainer.querySelector('.lanyard-top');
+            const strapPath = idCardContainer.querySelector('.strap-path-top');
+            const strapSvg = idCardContainer.querySelector('.lanyard-strap-top');
+
+            const baseHeight = 100;
+
+            // Bounce back animation
+            idCardContainer.style.transition = 'transform 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55)';
+            if (lanyardTop) lanyardTop.style.transition = 'height 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55)';
+
+            idCardContainer.style.transform = 'rotateX(0deg) rotateY(0deg)';
+            idCardContainer.style.animation = 'swayHanging 4s ease-in-out infinite';
+            idCard.style.animation = 'none';
+
+            // Reset card shadow
+            idCard.style.boxShadow = `
+                0 20px 60px rgba(0, 255, 65, 0.3),
+                inset 0 1px 0 rgba(255,255,255,0.1),
+                inset 0 -1px 0 rgba(0,0,0,0.3)
+            `;
+
+            if (lanyardTop) {
+                lanyardTop.style.height = `${baseHeight}px`;
+                lanyardTop.style.transform = 'rotateY(0deg)';
+            }
+            if (strapSvg) strapSvg.setAttribute('viewBox', `0 0 80 ${baseHeight}`);
+            if (strapPath) strapPath.setAttribute('d', `M40 100 Q35 50, 40 0`);
+
+            setTimeout(() => {
+                idCardContainer.style.transition = '';
+                if (lanyardTop) lanyardTop.style.transition = '';
+            }, 500);
+        }
+
+        function triggerOpenAnimation() {
+            const lanyardTop = idCardContainer.querySelector('.lanyard-top');
+
+            // Unhook animation - card falls and swings away
+            idCardContainer.style.transition = 'transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 0.5s ease';
+            idCardContainer.style.animation = 'none';
+
+            // Card swings and falls
+            idCardContainer.style.transform = 'translateY(120vh) rotate(15deg) scale(0.8)';
+            idCardContainer.style.opacity = '0';
+
+            // Fade out the hanger bar too
+            const hangerBar = document.querySelector('.hanger-bar');
+            if (hangerBar) {
+                hangerBar.style.transition = 'transform 0.5s ease, opacity 0.5s ease';
+                hangerBar.style.transform = 'translateY(-100%)';
+                hangerBar.style.opacity = '0';
+            }
+
+            setTimeout(() => {
+                hangerContainer.classList.add('hidden');
+
+                // Reset for when coming back
+                idCardContainer.style.transform = 'rotate(-1deg)';
+                idCardContainer.style.opacity = '1';
+                idCardContainer.style.transition = '';
+                idCardContainer.style.animation = 'swayHanging 4s ease-in-out infinite';
+
+                if (hangerBar) {
+                    hangerBar.style.transform = 'translateY(0)';
+                    hangerBar.style.opacity = '1';
+                    hangerBar.style.transition = '';
+                }
+
+                if (lanyardTop) {
+                    lanyardTop.style.height = '100px';
+                    lanyardTop.style.transform = 'rotateY(0deg)';
+                }
+
+                // Reset card shadow
+                idCard.style.boxShadow = `
+                    0 20px 60px rgba(0, 255, 65, 0.3),
+                    inset 0 1px 0 rgba(255,255,255,0.1),
+                    inset 0 -1px 0 rgba(0,0,0,0.3)
+                `;
+
+                terminalContainer.classList.add('active');
+
+                // Show command toggle button next to guide character
+                const guideCommandsToggle = document.getElementById('guideCommandsToggle');
+                if (guideCommandsToggle) {
+                    setTimeout(() => {
+                        guideCommandsToggle.classList.add('active');
+                    }, 500);
+                }
+
+                setTimeout(() => {
+                    displayWelcomeMessage();
+                }, 300);
+            }, 600);
+        }
+
+        // Dragging to pull down the card
+        idCardContainer.addEventListener('mousedown', (e) => {
+            e.preventDefault();
+            isDragging = true;
+            hasDragged = false;
+            startY = e.clientY;
+            idCardContainer.style.transition = '';
+            idCardContainer.style.animation = 'none';
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+
+            currentY = e.clientY - startY;
+
+            // Mark as dragged if moved more than 5px
+            if (Math.abs(currentY) > 5) {
+                hasDragged = true;
+            }
+
+            applyElasticEffect(currentY);
+        });
+
+        document.addEventListener('mouseup', () => {
+            if (!isDragging) return;
+            isDragging = false;
+
+            if (hasDragged && currentY >= pullThreshold) {
+                triggerOpenAnimation();
+            } else if (hasDragged) {
+                resetElastic();
+            }
+            currentY = 0;
+        });
+
+        // Touch support for mobile
+        idCardContainer.addEventListener('touchstart', (e) => {
+            isDragging = true;
+            hasDragged = false;
+            startY = e.touches[0].clientY;
+            idCardContainer.style.transition = '';
+            idCardContainer.style.animation = 'none';
+        });
+
+        document.addEventListener('touchmove', (e) => {
+            if (!isDragging) return;
+
+            currentY = e.touches[0].clientY - startY;
+
+            // Mark as dragged if moved more than 5px
+            if (Math.abs(currentY) > 5) {
+                hasDragged = true;
+            }
+
+            applyElasticEffect(currentY);
+        });
+
+        document.addEventListener('touchend', () => {
+            if (!isDragging) return;
+            isDragging = false;
+
+            if (hasDragged && currentY >= pullThreshold) {
+                triggerOpenAnimation();
+            } else if (hasDragged) {
+                resetElastic();
+            }
+            currentY = 0;
+        });
+
+        function activateTerminal() {
+            triggerOpenAnimation();
+        }
+
+        function displayWelcomeMessage() {
+            const welcome = `
+<pre class="ascii-art">
+   _____             __             __       ____        __    _ __
+  / ___/____ _____  / /_____  _____/ /_     / __ \\____ _/ /_  (_) /_
+  \\__ \\/ __ \`/ __ \\/ __/ __ \\/ ___/ __ \\   / / / / __ \`/ __ \\/ / __/
+ ___/ / /_/ / / / / /_/ /_/ (__  ) / / /  / /_/ / /_/ / / / / / /_
+/____/\\__,_/_/ /_/\\__/\\____/____/_/ /_/  /_____/\\__,_/_/ /_/_/\\__/
+</pre>
+<div class="terminal-line">
+    <span class="success">Welcome to Santosh's Terminal Portfolio v2.0</span>
+</div>
+<div class="terminal-line">
+    <span class="info">System initialized successfully...</span>
+</div>
+<div class="terminal-line">
+    <span class="output">Type <span class="help-command">'help'</span> to see available commands</span>
+</div>
+<div class="terminal-line">
+    <span class="warning">Tip: Use <span class="help-command">'easter-egg'</span> to discover hidden features!</span>
+</div>
+<br>
+            `;
+
+            addToTerminal(welcome);
+            initializeInput();
+        }
+
+        function addToTerminal(content) {
+            terminalBody.insertAdjacentHTML('beforeend', content);
+            // Scroll the terminal-body container (parent of terminalBody)
+            const terminalBodyContainer = document.querySelector('.terminal-body');
+            terminalBodyContainer.scrollTop = terminalBodyContainer.scrollHeight;
+        }
+
+        // Initialize the fixed input (called once)
+        function initializeInput() {
+            const input = document.getElementById('terminal-input');
+            if (input) {
+                input.focus();
+
+                // Only add event listener if not already added
+                if (!input.dataset.initialized) {
+                    input.addEventListener('keydown', handleCommand);
+                    input.dataset.initialized = 'true';
+
+                    // Keep focus on input when clicking terminal
+                    document.querySelector('.terminal-body').addEventListener('click', () => {
+                        input.focus();
+                    });
+                }
+            }
+        }
+
+        function handleCommand(e) {
+            const input = e.target;
+
+            if (e.key === 'Enter') {
+                const command = input.value.trim().toLowerCase();
+
+                if (command) {
+                    commandHistory.push(command);
+                    historyIndex = commandHistory.length;
+                }
+
+                // Display the command in output
+                addToTerminal(`
+                    <div class="terminal-line">
+                        <span class="prompt">santosh@portfolio:~$</span>
+                        <span class="command"> ${input.value}</span>
+                    </div>
+                `);
+
+                // Clear the input
+                input.value = '';
+
+                // Process the command
+                processCommand(command);
+
+            } else if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                if (historyIndex > 0) {
+                    historyIndex--;
+                    input.value = commandHistory[historyIndex];
+                }
+            } else if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                if (historyIndex < commandHistory.length - 1) {
+                    historyIndex++;
+                    input.value = commandHistory[historyIndex];
+                } else {
+                    historyIndex = commandHistory.length;
+                    input.value = '';
+                }
+            } else if (e.key === 'Tab') {
+                e.preventDefault();
+                autocomplete(input);
+            }
+        }
+
+        function autocomplete(input) {
+            const commands = ['help', 'about', 'skills', 'projects', 'experience', 'education', 'contact', 'clear', 'gui', 'home', 'easter-egg', 'matrix', 'sudo', 'whoami', 'history'];
+            const partial = input.value.toLowerCase();
+            
+            const matches = commands.filter(cmd => cmd.startsWith(partial));
+            
+            if (matches.length === 1) {
+                input.value = matches[0];
+            } else if (matches.length > 1) {
+                addToTerminal(`
+                    <div class="terminal-line">
+                        <span class="info">Possible commands: ${matches.join(', ')}</span>
+                    </div>
+                `);
+            }
+        }
+
+        function processCommand(command) {
+            // Parse command and arguments
+            const parts = command.split(' ');
+            const cmd = parts[0];
+            const args = parts.slice(1);
+            
+            switch(cmd) {
+                case 'help':
+                    showHelp();
+                    break;
+                case 'about':
+                    showAbout();
+                    break;
+                case 'skills':
+                    showSkills();
+                    break;
+                case 'projects':
+                    showProjects();
+                    break;
+                case 'experience':
+                    showExperience();
+                    break;
+                case 'education':
+                    showEducation();
+                    break;
+                case 'contact':
+                    showContact();
+                    break;
+                case 'clear':
+                    clearTerminal();
+                    break;
+                case 'cls':
+                    clearTerminal();
+                    break;
+                case 'gui':
+                    switchToGUI();
+                    break;
+                case 'home':
+                    goHome();
+                    break;
+                case 'easter-egg':
+                    showEasterEgg();
+                    break;
+                case 'matrix':
+                    matrixEffect();
+                    break;
+                case 'sudo':
+                    sudoCommand(args);
+                    break;
+                case 'whoami':
+                    whoami();
+                    break;
+                case 'date':
+                    showDate();
+                    break;
+                case 'time':
+                    showTime();
+                    break;
+                case 'history':
+                    showHistory();
+                    break;
+                case '':
+                    // Empty command, do nothing
+                    break;
+                default:
+                    showError(cmd);
+            }
+        }
+
+        function showHelp() {
+            addToTerminal(`
+                <div class="help-panel">
+                    <div class="terminal-line">
+                        <span class="help-command">Available Commands:</span>
+                    </div>
+                    <br>
+                    <div class="terminal-line">
+                        <span class="help-command">help</span>
+                        <span class="help-description">- Display this help message</span>
+                    </div>
+                    <div class="terminal-line">
+                        <span class="help-command">about</span>
+                        <span class="help-description">- Learn more about me</span>
+                    </div>
+                    <div class="terminal-line">
+                        <span class="help-command">skills</span>
+                        <span class="help-description">- View my technical skills</span>
+                    </div>
+                    <div class="terminal-line">
+                        <span class="help-command">projects</span>
+                        <span class="help-description">- See my featured projects</span>
+                    </div>
+                    <div class="terminal-line">
+                        <span class="help-command">experience</span>
+                        <span class="help-description">- View my work experience</span>
+                    </div>
+                    <div class="terminal-line">
+                        <span class="help-command">education</span>
+                        <span class="help-description">- See my educational background</span>
+                    </div>
+                    <div class="terminal-line">
+                        <span class="help-command">contact</span>
+                        <span class="help-description">- Get my contact information</span>
+                    </div>
+                    <div class="terminal-line">
+                        <span class="help-command">clear / cls</span>
+                        <span class="help-description">- Clear the terminal screen</span>
+                    </div>
+                    <div class="terminal-line">
+                        <span class="help-command">home</span>
+                        <span class="help-description">- Return to home screen (ID card)</span>
+                    </div>
+                    <div class="terminal-line">
+                        <span class="help-command">gui</span>
+                        <span class="help-description">- Switch to normal portfolio view</span>
+                    </div>
+                    <div class="terminal-line">
+                        <span class="help-command">history</span>
+                        <span class="help-description">- Show command history</span>
+                    </div>
+                    <div class="terminal-line">
+                        <span class="help-command">whoami</span>
+                        <span class="help-description">- Display current user</span>
+                    </div>
+                    <div class="terminal-line">
+                        <span class="help-command">date / time</span>
+                        <span class="help-description">- Show current date and time</span>
+                    </div>
+                    <br>
+                    <div class="terminal-line">
+                        <span class="warning">Easter Eggs:</span>
+                    </div>
+                    <div class="terminal-line">
+                        <span class="help-command">easter-egg</span>
+                        <span class="help-description">- Discover hidden features</span>
+                    </div>
+                    <div class="terminal-line">
+                        <span class="help-command">matrix</span>
+                        <span class="help-description">- Enter the Matrix</span>
+                    </div>
+                    <div class="terminal-line">
+                        <span class="help-command">sudo [command]</span>
+                        <span class="help-description">- Run command as superuser (try it!)</span>
+                    </div>
+                    <br>
+                    <div class="terminal-line">
+                        <span class="info">Pro Tip: Use TAB for autocomplete, ↑↓ for command history</span>
+                    </div>
+                </div>
+            `);
+        }
+
+        function showAbout() {
+            addToTerminal(`
+                <div class="section-header">ABOUT SANTOSH DAHIT</div>
+                <br>
+                <div class="terminal-line">
+                    <span class="output">
+                        I'm a passionate Backend Engineer currently working at Kayple, a B2C 
+                        startup in Seoul, where I architect and develop robust backend systems 
+                        that serve thousands of users daily.
+                    </span>
+                </div>
+                <br>
+                <div class="terminal-line">
+                    <span class="output">
+                        With a Master's degree in Data Science from Kwangwoon University and 
+                        a Bachelor's in Computer Engineering from Kyungdong University, I bring 
+                        both theoretical knowledge and practical expertise to every project.
+                    </span>
+                </div>
+                <br>
+                <div class="terminal-line">
+                    <span class="info">📊 Experience: 2.5+ years in production</span>
+                </div>
+                <div class="terminal-line">
+                    <span class="info">🚀 Applications: 7+ live mobile apps</span>
+                </div>
+                <div class="terminal-line">
+                    <span class="info">👥 Users Served: Thousands of active users</span>
+                </div>
+                <div class="terminal-line">
+                    <span class="info">📍 Location: Seoul, South Korea</span>
+                </div>
+                <br>
+            `);
+        }
+
+        function showSkills() {
+            addToTerminal(`
+                <div class="section-header">TECHNICAL SKILLS</div>
+                <br>
+                <div class="terminal-line">
+                    <span class="info">💻 Backend Development:</span>
+                </div>
+                <div class="terminal-line">
+                    <span class="skill-badge">Spring Boot and Frameworks</span>
+                    <span class="skill-badge">Core Java</span>
+                    <span class="skill-badge">JWT</span>
+                    <span class="skill-badge">OOP</span>
+                    <span class="skill-badge">In-app-payment</span>
+                </div>
+                <br>
+                <div class="terminal-line">
+                    <span class="info">🗄️ Database & Cloud:</span>
+                </div>
+                <div class="terminal-line">
+                    <span class="skill-badge">RDS</span>
+                    <span class="skill-badge">SQL</span>
+                    <span class="skill-badge">AWS</span>
+                    <span class="skill-badge">GCP</span>
+                    <span class="skill-badge">Prometheus</span>
+                    <span class="skill-badge">Grafana</span>
+                    <span class="skill-badge">Portainer</span>
+                </div>
+                <br>
+                <div class="terminal-line">
+                    <span class="info">🔧 DevOps & Tools:</span>
+                </div>
+                <div class="terminal-line">
+                    <span class="skill-badge">Docker</span>
+                    <span class="skill-badge">Git</span>
+                    <span class="skill-badge">Kubernetes</span>
+                    <span class="skill-badge">Cloud Run</span>
+                </div>
+                <br>
+                <div class="terminal-line">
+                    <span class="info">🤖 Machine Learning & Data Science:</span>
+                </div>
+                <div class="terminal-line">
+                    <span class="skill-badge">Python</span>
+                    <span class="skill-badge">Pandas</span>
+                    <span class="skill-badge">NumPy</span>
+                    <span class="skill-badge">Scikit-learn</span>
+                    <span class="skill-badge">TensorFlow</span>
+                    <span class="skill-badge">OpenCV</span>
+                    <span class="skill-badge">Data Visualization</span>
+                    <span class="skill-badge">Power BI</span>
+                    <span class="skill-badge">Tableau</span>
+                </div>
+                <br>
+            `);
+        }
+
+        function showProjects() {
+            addToTerminal(`
+                <div class="section-header">FEATURED PROJECTS</div>
+                <br>
+                
+                <div class="project-card-terminal">
+                    <h3>🎓 EDUFINGERS (에듀핑거즈)</h3>
+                    <p>A comprehensive learning quiz platform available on Google Play, designed to provide interactive educational content and assessments for students.</p>
+                    <div>
+                        <span class="project-tag">Spring Framework</span>
+                        <span class="project-tag">Java</span>
+                        <span class="project-tag">AWS</span>
+                        <span class="project-tag">GCP</span>
+                        <span class="project-tag">Docker</span>
+                    </div>
+                </div>
+
+                <div class="project-card-terminal">
+                    <h3>👥 BOSC</h3>
+                    <p>Platform for gathering similar interest people - a social networking application that connects users based on shared interests and activities.</p>
+                    <div>
+                        <span class="project-tag">Core Java</span>
+                        <span class="project-tag">Spring Boot</span>
+                        <span class="project-tag">Prometheus</span>
+                    </div>
+                </div>
+
+                <div class="project-card-terminal">
+                    <h3>🛍️ EggD</h3>
+                    <p>An innovative mobile application for both influencers and sellers, available on Google Play. Facilitates connection between content creators and businesses.</p>
+                    <div>
+                        <span class="project-tag">Core Java</span>
+                        <span class="project-tag">Spring Boot</span>
+                        <span class="project-tag">AWS</span>
+                        <span class="project-tag">Docker</span>
+                    </div>
+                </div>
+
+                <div class="project-card-terminal">
+                    <h3>🗺️ Many Korea</h3>
+                    <p>Tourism application for Korea providing detailed information about places and events. Helps tourists discover and explore Korean attractions and cultural events.</p>
+                    <div>
+                        <span class="project-tag">Core Java</span>
+                        <span class="project-tag">Spring Boot</span>
+                        <span class="project-tag">Docker</span>
+                    </div>
+                </div>
+
+                <div class="project-card-terminal">
+                    <h3>💼 돈벌잠 (Money Job)</h3>
+                    <p>Mobile application designed specifically for construction workers, available on Google Play. Connects workers with construction job opportunities and projects.</p>
+                    <div>
+                        <span class="project-tag">Spring Boot</span>
+                        <span class="project-tag">Android</span>
+                        <span class="project-tag">MySQL</span>
+                    </div>
+                </div>
+                <br>
+            `);
+        }
+
+        function showExperience() {
+            addToTerminal(`
+                <div class="section-header">WORK EXPERIENCE</div>
+                <br>
+                <div class="terminal-line">
+                    <span class="info">🏢 Back End Developer - Kayple</span>
+                </div>
+                <div class="terminal-line">
+                    <span class="output">   📅 Aug 2024 - Present (Full-time)</span>
+                </div>
+                <div class="terminal-line">
+                    <span class="output">   📍 Seoul, South Korea</span>
+                </div>
+                <div class="terminal-line">
+                    <span class="output">   💬 "Making endpoint to connect the people with the server 😁😁"</span>
+                </div>
+                <br>
+                <div class="terminal-line">
+                    <span class="output">   • Architected and deployed 7+ production applications</span>
+                </div>
+                <div class="terminal-line">
+                    <span class="output">   • Built EDUFINGERS, BOSC, EggD, Many Korea platforms</span>
+                </div>
+                <div class="terminal-line">
+                    <span class="output">   • Implemented authentication systems with Spring Security</span>
+                </div>
+                <br>
+                <div class="terminal-line">
+                    <span class="info">🏢 Java Backend Developer - 모리고 (Freelance)</span>
+                </div>
+                <div class="terminal-line">
+                    <span class="output">   📅 Oct 2023 - Oct 2024 (Part-time)</span>
+                </div>
+                <div class="terminal-line">
+                    <span class="output">   💬 "Providing freelance translators to help foreigners in Korea"</span>
+                </div>
+                <br>
+                <div class="terminal-line">
+                    <span class="output">   • Developed backend services for translator platform</span>
+                </div>
+                <div class="terminal-line">
+                    <span class="output">   • Implemented Spring MVC and GraphQL integration</span>
+                </div>
+                <br>
+            `);
+        }
+
+        function showEducation() {
+            addToTerminal(`
+                <div class="section-header">EDUCATION</div>
+                <br>
+                <div class="terminal-line">
+                    <span class="info">🎓 Master's Degree in Data Science</span>
+                </div>
+                <div class="terminal-line">
+                    <span class="output">   🏫 Kwangwoon University</span>
+                </div>
+                <div class="terminal-line">
+                    <span class="output">   📅 Sep 2022 - Aug 2024</span>
+                </div>
+                <div class="terminal-line">
+                    <span class="output">   📚 Data Visualization, Data Analytics, Machine Learning</span>
+                </div>
+                <br>
+                <div class="terminal-line">
+                    <span class="info">🎓 Bachelor's Degree in Computer Engineering</span>
+                </div>
+                <div class="terminal-line">
+                    <span class="output">   🏫 Kyungdong University</span>
+                </div>
+                <div class="terminal-line">
+                    <span class="output">   📅 Sep 2017 - Aug 2021</span>
+                </div>
+                <div class="terminal-line">
+                    <span class="output">   📚 Python, HTML5, Web Development</span>
+                </div>
+                <br>
+            `);
+        }
+
+        function showContact() {
+            addToTerminal(`
+                <div class="section-header">CONTACT INFORMATION</div>
+                <br>
+                <div class="terminal-line">
+                    <span class="info">📧 Email:</span>
+                    <span class="output"> santoshdahit454@gmail.com</span>
+                </div>
+                <div class="terminal-line">
+                    <span class="info">💼 LinkedIn:</span>
+                    <span class="output"> linkedin.com/in/santosh-dahit</span>
+                </div>
+                <div class="terminal-line">
+                    <span class="info">🐙 GitHub:</span>
+                    <span class="output"> github.com/SantoshDahit</span>
+                </div>
+                <div class="terminal-line">
+                    <span class="info">📍 Location:</span>
+                    <span class="output"> Seoul, South Korea</span>
+                </div>
+                <div class="terminal-line">
+                    <span class="info">💻 Status:</span>
+                    <span class="success"> Open to opportunities</span>
+                </div>
+                <br>
+                <div class="terminal-line">
+                    <span class="warning">💡 Tip: You can click on the links to copy them!</span>
+                </div>
+                <br>
+            `);
+        }
+
+        function clearTerminal() {
+            terminalBody.innerHTML = '';
+        }
+
+        function goHome() {
+            addToTerminal(`
+                <div class="terminal-line">
+                    <span class="info">🏠 Returning to home screen...</span>
+                </div>
+            `);
+
+            setTimeout(() => {
+                terminalContainer.classList.remove('active');
+                if (guideCommands) guideCommands.classList.remove('active');
+                if (guideCommandsToggle) guideCommandsToggle.classList.remove('active');
+                hangerContainer.classList.remove('hidden');
+                clearTerminal();
+            }, 500);
+        }
+
+        function showHistory() {
+            addToTerminal(`
+                <div class="terminal-line">
+                    <span class="info">Command History:</span>
+                </div>
+            `);
+            
+            commandHistory.forEach((cmd, index) => {
+                addToTerminal(`
+                    <div class="terminal-line">
+                        <span class="output">  ${index + 1}  ${cmd}</span>
+                    </div>
+                `);
+            });
+            addToTerminal('<br>');
+        }
+
+        function whoami() {
+            addToTerminal(`
+                <div class="terminal-line">
+                    <span class="success">santosh-dahit</span>
+                </div>
+                <div class="terminal-line">
+                    <span class="output">Backend Engineer | Spring Boot Expert | Data Science Enthusiast</span>
+                </div>
+                <br>
+            `);
+        }
+
+        function showDate() {
+            const now = new Date();
+            addToTerminal(`
+                <div class="terminal-line">
+                    <span class="output">${now.toDateString()}</span>
+                </div>
+                <br>
+            `);
+        }
+
+        function showTime() {
+            const now = new Date();
+            addToTerminal(`
+                <div class="terminal-line">
+                    <span class="output">${now.toLocaleTimeString()}</span>
+                </div>
+                <br>
+            `);
+        }
+
+        function showEasterEgg() {
+            const eggs = [
+                "🥚 You found the easter egg! Here's a secret: I debug with console.log() like everyone else 😄",
+                "🎮 Achievement Unlocked: Terminal Explorer!",
+                "🚀 Fun fact: This entire portfolio is less than 1000 lines of code!",
+                "💡 Pro tip: Try 'sudo rm -rf /' (just kidding, DON'T!)",
+                "🎵 Now playing: Binary Beats - The Algorithm ft. Stack Overflow"
+            ];
+            
+            const randomEgg = eggs[Math.floor(Math.random() * eggs.length)];
+            
+            addToTerminal(`
+                <div class="terminal-line">
+                    <span class="warning">${randomEgg}</span>
+                </div>
+                <br>
+            `);
+        }
+
+        function matrixEffect() {
+            addToTerminal(`
+                <div class="terminal-line glitch">
+                    <span class="success">Entering the Matrix...</span>
+                </div>
+                <div class="terminal-line">
+                    <span class="success">Wake up, Neo...</span>
+                </div>
+                <div class="terminal-line">
+                    <span class="success">The Matrix has you...</span>
+                </div>
+                <div class="terminal-line">
+                    <span class="success">Follow the white rabbit 🐰</span>
+                </div>
+                <br>
+            `);
+            
+            // Temporarily increase matrix rain
+            const originalOpacity = canvas.style.opacity;
+            canvas.style.opacity = '0.5';
+            setTimeout(() => {
+                canvas.style.opacity = originalOpacity;
+            }, 3000);
+        }
+
+        function sudoCommand(args) {
+            const cmd = args.join(' ');
+            
+            if (cmd === 'rm -rf /') {
+                addToTerminal(`
+                    <div class="terminal-line">
+                        <span class="error">❌ Permission denied: Are you trying to break my portfolio? 😅</span>
+                    </div>
+                    <div class="terminal-line">
+                        <span class="warning">⚠️  Nice try though! Here's a cookie instead: 🍪</span>
+                    </div>
+                    <br>
+                `);
+            } else if (cmd === 'hire santosh') {
+                addToTerminal(`
+                    <div class="terminal-line">
+                        <span class="success">✅ Excellent decision! Initiating hiring protocol...</span>
+                    </div>
+                    <div class="terminal-line">
+                        <span class="info">📧 Please contact: santoshdahit454@gmail.com</span>
+                    </div>
+                    <br>
+                `);
+            } else if (cmd) {
+                addToTerminal(`
+                    <div class="terminal-line">
+                        <span class="error">sudo: ${cmd}: command not found</span>
+                    </div>
+                    <div class="terminal-line">
+                        <span class="info">💡 Try 'sudo hire santosh' for better results!</span>
+                    </div>
+                    <br>
+                `);
+            } else {
+                addToTerminal(`
+                    <div class="terminal-line">
+                        <span class="error">sudo: no command specified</span>
+                    </div>
+                    <br>
+                `);
+            }
+        }
+
+        function showError(cmd) {
+            addToTerminal(`
+                <div class="terminal-line">
+                    <span class="error">bash: ${cmd}: command not found</span>
+                </div>
+                <div class="terminal-line">
+                    <span class="info">Type 'help' to see available commands</span>
+                </div>
+                <br>
+            `);
+        }
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            // Ctrl/Cmd + L to clear
+            if ((e.ctrlKey || e.metaKey) && e.key === 'l') {
+                e.preventDefault();
+                clearTerminal();
+                // Focus on the fixed input after clearing
+                const input = document.getElementById('terminal-input');
+                if (input) input.focus();
+            }
+        });
+
+        // ===== GUIDE CHARACTER SPEECH =====
+        const speechMessages = [
+            "Hi there! 👋 Welcome to <span class='highlight'>Santosh's Portfolio</span>!",
+            "To enter the terminal, just <span class='highlight'>pull down</span> the ID card! ⬇️",
+            "Drag the card down to unlock the <span class='highlight'>terminal</span>! 🔓",
+            "Click any <span class='highlight'>command</span> on my list to try it! 💡",
+            "Type <span class='highlight'>'about'</span> to learn about Santosh!",
+            "Type <span class='highlight'>'skills'</span> to see tech expertise!",
+            "Type <span class='highlight'>'projects'</span> to view portfolio work!",
+            "Don't miss the <span class='highlight'>'easter-egg'</span> command! 🥚",
+            "Ready to explore? Let's go! 🚀"
+        ];
+
+        let currentMessageIndex = 0;
+        const speechText = document.getElementById('speechText');
+        const speechBubble = document.getElementById('speechBubble');
+
+        function cycleMessages() {
+            if (!speechText || !speechBubble) return;
+
+            // Fade out
+            speechBubble.style.opacity = '0';
+            speechBubble.style.transform = 'scale(0.9)';
+
+            setTimeout(() => {
+                currentMessageIndex = (currentMessageIndex + 1) % speechMessages.length;
+                speechText.innerHTML = speechMessages[currentMessageIndex];
+
+                // Fade in
+                speechBubble.style.opacity = '1';
+                speechBubble.style.transform = 'scale(1)';
+            }, 300);
+        }
+
+        // Add transition for smooth animation
+        if (speechBubble) {
+            speechBubble.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+        }
+
+        // Cycle messages every 5 seconds
+        setInterval(cycleMessages, 5000);
+
+        // ===== STATUS BAR TIME =====
+        function updateTime() {
+            const timeElement = document.getElementById('currentTime');
+            if (timeElement) {
+                const now = new Date();
+                const hours = String(now.getHours()).padStart(2, '0');
+                const minutes = String(now.getMinutes()).padStart(2, '0');
+                const seconds = String(now.getSeconds()).padStart(2, '0');
+                timeElement.textContent = `${hours}:${minutes}:${seconds}`;
+            }
+        }
+
+        updateTime();
+        setInterval(updateTime, 1000);
+
+        // ===== HIDE DECORATIONS WHEN TERMINAL ACTIVE =====
+        const statusBar = document.getElementById('statusBar');
+        const floatingIconsEl = document.getElementById('floatingIcons');
+        const guideChar = document.getElementById('guideCharacter');
+        const scanLines = document.querySelector('.scan-lines');
+
+        function hideDecorations() {
+            if (statusBar) statusBar.style.display = 'none';
+            if (floatingIconsEl) floatingIconsEl.style.display = 'none';
+            if (scanLines) scanLines.style.display = 'none';
+            document.querySelectorAll('.corner-decor').forEach(el => el.style.display = 'none');
+            // Keep guide character visible in terminal mode - don't hide it
+        }
+
+        function showDecorations() {
+            if (statusBar) statusBar.style.display = 'flex';
+            if (floatingIconsEl) floatingIconsEl.style.display = 'block';
+            if (guideChar) guideChar.style.display = 'flex';
+            if (scanLines) scanLines.style.display = 'block';
+            document.querySelectorAll('.corner-decor').forEach(el => el.style.display = 'block');
+        }
+
+        // Modify triggerOpenAnimation to hide decorations
+        const originalTriggerOpen = triggerOpenAnimation;
+        triggerOpenAnimation = function() {
+            hideDecorations();
+            originalTriggerOpen();
+        };
+
+        // Modify goHome to show decorations
+        const originalGoHome = goHome;
+        goHome = function() {
+            addToTerminal(`
+                <div class="terminal-line">
+                    <span class="info">🏠 Returning to home screen...</span>
+                </div>
+            `);
+
+            setTimeout(() => {
+                terminalContainer.classList.remove('active');
+                if (guideCommands) guideCommands.classList.remove('active');
+                if (guideCommandsToggle) guideCommandsToggle.classList.remove('active');
+                hangerContainer.classList.remove('hidden');
+                showDecorations();
+                clearTerminal();
+            }, 500);
+        };
+    </script>
+</body>
+</html>
