@@ -1024,6 +1024,10 @@
             color: var(--terminal-success);
             line-height: 1.2;
             font-size: 0.8rem;
+            text-align: left;
+            margin: 0;
+            padding: 0;
+            overflow-x: auto;
         }
 
         /* Help panel */
@@ -1187,7 +1191,28 @@
             .terminal-body {
                 font-size: 0.8rem;
                 padding: 10px;
-                padding-bottom: 100px; /* Space for fixed input */
+                padding-bottom: 120px; /* Space for fixed input */
+                text-align: left;
+            }
+
+            .terminal-output {
+                text-align: left;
+                width: 100%;
+            }
+
+            .terminal-line {
+                text-align: left;
+                word-wrap: break-word;
+                overflow-wrap: break-word;
+            }
+
+            .ascii-art, pre {
+                text-align: left;
+                margin: 0;
+                padding: 0;
+                font-size: 0.5rem;
+                overflow-x: auto;
+                white-space: pre;
             }
 
             .guide-commands {
@@ -1198,6 +1223,23 @@
             .guide-cmd {
                 font-size: 0.75rem;
                 padding: 6px 8px;
+            }
+
+            /* Mobile terminal input fixes */
+            .terminal-input-container {
+                padding: 12px 15px;
+                z-index: 10000; /* Higher z-index for mobile */
+            }
+
+            #terminal-input {
+                font-size: 16px; /* Prevents iOS zoom on focus */
+                padding: 12px;
+                min-height: 44px; /* Better touch target */
+            }
+
+            .input-hint {
+                font-size: 0.7rem;
+                margin-top: 6px;
             }
         }
 
@@ -1265,11 +1307,11 @@
                 bottom: -40px;
             }
 
-            /* Guide character mobile */
+            /* Adjust 3D model size on mobile */
             .guide-character {
-                bottom: 35px;
+                bottom: 120px;
                 right: 10px;
-                transform: scale(0.7);
+                transform: scale(0.6);
                 transform-origin: bottom right;
             }
 
@@ -1300,6 +1342,58 @@
             .character-3d {
                 width: 200px;
                 height: 280px;
+            }
+
+            .terminal-body {
+                font-size: 0.75rem;
+                padding: 8px;
+                padding-bottom: 120px; /* Space for fixed input */
+                text-align: left;
+            }
+
+            .terminal-output {
+                text-align: left;
+                width: 100%;
+            }
+
+            .terminal-line {
+                text-align: left;
+                word-wrap: break-word;
+                overflow-wrap: break-word;
+            }
+
+            .ascii-art, pre {
+                text-align: left;
+                margin: 0;
+                padding: 0;
+                font-size: 0.45rem;
+                overflow-x: auto;
+                white-space: pre;
+            }
+
+            /* Adjust 3D model size on small mobile screens */
+            .guide-character {
+                bottom: 110px;
+                right: 5px;
+                transform: scale(0.55);
+                transform-origin: bottom right;
+            }
+
+            /* Mobile terminal input fixes for small screens */
+            .terminal-input-container {
+                padding: 10px 12px;
+                z-index: 10000;
+            }
+
+            #terminal-input {
+                font-size: 16px;
+                padding: 10px;
+                min-height: 44px;
+            }
+
+            .input-hint {
+                font-size: 0.65rem;
+                margin-top: 5px;
             }
 
             /* Hide floating icons on small screens */
@@ -1699,9 +1793,9 @@
         function switchToTerminal() {
             guiContainer.classList.remove('active');
             terminalContainer.classList.add('active');
-            // Show guide character back in terminal mode
+            // Hide guide character in terminal mode
             const guideChar = document.getElementById('guideCharacter');
-            if (guideChar) guideChar.style.display = 'flex';
+            if (guideChar) guideChar.style.display = 'none';
 
             addToTerminal(`
                 <div class="terminal-line">
@@ -1712,7 +1806,7 @@
                 </div>
                 <br>
             `);
-            
+
             // Focus on input
             const input = document.getElementById('terminal-input');
             if (input) input.focus();
@@ -1932,6 +2026,12 @@
                 `;
 
                 terminalContainer.classList.add('active');
+
+                // Hide guide character when terminal is active
+                const guideChar = document.getElementById('guideCharacter');
+                if (guideChar) {
+                    guideChar.style.display = 'none';
+                }
 
                 // Show command toggle button next to guide character
                 const guideCommandsToggle = document.getElementById('guideCommandsToggle');
