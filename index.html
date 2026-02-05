@@ -865,6 +865,34 @@
         .btn-minimize { background: #ffbd2e; }
         .btn-maximize { background: #27c93f; }
 
+        .btn-portfolio {
+            width: auto;
+            height: auto;
+            border-radius: 6px;
+            padding: 4px 12px;
+            background: linear-gradient(135deg, #ff00ff, #00d9ff);
+            color: #0a0e27;
+            font-size: 0.75rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-left: auto;
+            margin-right: 10px;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 10px rgba(255, 0, 255, 0.5), 0 0 20px rgba(0, 217, 255, 0.3);
+            animation: portfolioBtnGlow 2s ease-in-out infinite;
+        }
+
+        .btn-portfolio:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(255, 0, 255, 0.8), 0 0 40px rgba(0, 217, 255, 0.6);
+        }
+
+        @keyframes portfolioBtnGlow {
+            0%, 100% { box-shadow: 0 0 10px rgba(255, 0, 255, 0.5), 0 0 20px rgba(0, 217, 255, 0.3); }
+            50% { box-shadow: 0 0 20px rgba(255, 0, 255, 0.8), 0 0 30px rgba(0, 217, 255, 0.5); }
+        }
+
         .terminal-title {
             flex: 1;
             text-align: center;
@@ -1656,6 +1684,7 @@
             <div class="terminal-button btn-minimize"></div>
             <div class="terminal-button btn-maximize"></div>
             <div class="terminal-title">santosh@portfolio:~$</div>
+            <button class="terminal-button btn-portfolio" id="portfolioBtn" title="View Portfolio">Portfolio</button>
         </div>
         <div class="terminal-body">
             <div class="terminal-output" id="terminalBody">
@@ -1739,6 +1768,9 @@
 
         // Back to terminal button
         backToTerminalBtn.addEventListener('click', switchToTerminal);
+
+        // Portfolio button - direct access to GUI portfolio
+        document.getElementById('portfolioBtn').addEventListener('click', switchToGUI);
 
         // Make guide command buttons clickable to execute commands
         document.querySelectorAll('.guide-cmd').forEach(cmd => {
