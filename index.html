@@ -1772,6 +1772,24 @@
         // Portfolio button - direct access to GUI portfolio
         document.getElementById('portfolioBtn').addEventListener('click', switchToGUI);
 
+        // Language state and iframe ref
+        let currentLang = 'en';
+        const guiFrame = document.getElementById('guiFrame');
+
+        // Listen for language switch messages from portfolio iframe
+        window.addEventListener('message', (event) => {
+            if (event.data && event.data.type === 'switchLang') {
+                const lang = event.data.lang;
+                if (lang === 'kr') {
+                    currentLang = 'kr';
+                    guiFrame.src = 'portfolio-kr.html';
+                } else if (lang === 'en') {
+                    currentLang = 'en';
+                    guiFrame.src = 'portfolio.html';
+                }
+            }
+        });
+
         // Make guide command buttons clickable to execute commands
         document.querySelectorAll('.guide-cmd').forEach(cmd => {
             cmd.addEventListener('click', () => {
