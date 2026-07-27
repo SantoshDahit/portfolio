@@ -1,168 +1,94 @@
-# 🎯 QUICK START - READ THIS FIRST!
+# Portfolio — Santosh Dahit
 
-## 📦 You have everything you need!
-
-Your portfolio is ready to deploy. Here's what you got:
+Backend engineer portfolio. Two pages, English and Korean, with an in-page
+language toggle. No build step, no dependencies.
 
 ```
-✅ index.html              - Main portfolio file (Terminal UI)
-✅ portfolio.html          - Normal portfolio (accessible via 'gui' command)
-✅ santosh-photo.jpg       - Your profile photo
-✅ README.md               - Full documentation
-✅ DEPLOYMENT.md           - Deployment instructions
-✅ package.json            - Project configuration
-✅ .gitignore              - Git ignore file
-✅ CNAME                   - Custom domain file (optional)
+index.html            English portfolio (site root)
+portfolio-kr.html     Korean portfolio
+santosh-photo.jpg     Photo used in the About section
+santosh-avatar.png    Team avatar from kayple.com/about
 ```
+
+The language toggle lives in the header of each page: `🇰🇷 한국어` on the English
+page links to `portfolio-kr.html`, `🇺🇸 English` links back to `index.html`.
 
 ---
 
-## 🚀 Deploy in 2 Minutes
+## Run it locally
 
-### Option 1: Netlify (EASIEST)
-1. Go to https://app.netlify.com/drop
-2. Drag your entire folder
-3. ✅ Done! Your site is live!
+Open `index.html` in a browser, or serve the folder:
 
-### Option 2: GitHub Pages
 ```bash
-# 1. Create a repo on GitHub
-# 2. Run these commands:
-git init
-git add .
-git commit -m "Deploy portfolio"
-git branch -M main
-git remote add origin https://github.com/YOUR-USERNAME/portfolio.git
-git push -u origin main
-
-# 3. Enable GitHub Pages in repo Settings → Pages
-# ✅ Live at: https://YOUR-USERNAME.github.io/portfolio/
+python3 -m http.server 8000    # then visit http://localhost:8000
 ```
+
+A local server is worth using — the pages load Google Fonts over the network,
+and `file://` URLs behave differently for some browser features.
 
 ---
 
-## 🧪 Test Locally First
+## Deploy
 
-### Method 1: Double-click
-Just open `index.html` in your browser
+The site is live on GitHub Pages, served from `main`:
 
-### Method 2: Local Server (Better)
+**https://santoshdahit.github.io/portfolio/**
+
+Pushing to `main` redeploys it — usually live within a minute:
+
 ```bash
-# Python
-python -m http.server 8000
-
-# Or Node.js
-npx http-server
-
-# Visit: http://localhost:8000
+git add -A
+git commit -m "Update portfolio"
+git push origin main
 ```
 
 ---
 
-## 🎮 How to Use Your Portfolio
+## Editing
 
-1. **Pull the green strip** below the ID card
-2. **Terminal activates** with Matrix rain background
-3. **Type commands**:
-   - `help` - See all commands
-   - `about` - Your bio
-   - `skills` - Technical skills
-   - `projects` - Your 5 projects
-   - `contact` - Contact info
-   - `gui` - Switch to normal portfolio
-   - `easter-egg` - Fun surprises!
+Both pages are self-contained: all CSS sits in a `<style>` block in `<head>`,
+all JS in one `<script>` before `</body>`.
+
+**Keep the two languages in sync.** Any structural change to one page needs the
+same change in the other — the design, class names, and section order are
+identical by design.
+
+### Design tokens
+
+Colours and fonts are CSS custom properties in `:root`, so a palette change is
+a handful of edits at the top of the file:
+
+```css
+--bg:     #111111;   /* page background   */
+--accent: #7af298;   /* mint accent       */
+--ink:    #ffffff;   /* headings          */
+--muted:  #b5b5b5;   /* body copy         */
+--line:   #3a3b3c;   /* borders           */
+```
+
+Type is **Space Grotesk** for display and **Fragment Mono** for the `// section`
+eyebrows, tags, and numbers. The Korean page adds **Noto Sans KR** as a fallback
+for Hangul.
+
+### Sections
+
+`Hero → Skills → About → Projects → Services → Process → Experience → Contact`
+
+Section IDs match the nav links (`#skills`, `#about`, `#projects`, `#services`,
+`#experience`, `#contact`).
+
+### Projects
+
+Project data came from Kayple's portfolio API (`api.homepage.kayple.com/projects`).
+Every store and website link on a project card was checked to return HTTP 200 —
+if you add one, verify it resolves before committing.
 
 ---
 
-## ✏️ Customization (Optional)
+## Contact details to update
 
-### Update Email/Links
-Edit `index.html`, search for:
+Search for these if any of them change:
+
 - `santoshdahit454@gmail.com`
 - `linkedin.com/in/santosh-dahit`
 - `github.com/SantoshDahit`
-
-### Change Colors
-Edit CSS in `index.html`:
-```css
-:root {
-    --terminal-text: #00ff41;  /* Change to your color */
-}
-```
-
-### Add More Skills/Projects
-Search for `showSkills()` or `showProjects()` in `index.html`
-
----
-
-## 📱 Already Mobile Responsive!
-
-✅ Works on desktop, tablet, and mobile
-✅ Touch-friendly pull strip
-✅ Responsive layout
-✅ All browsers supported
-
----
-
-## 🆘 Need Help?
-
-1. Check **README.md** - Full documentation
-2. Check **DEPLOYMENT.md** - Deploy anywhere
-3. Email: santoshdahit454@gmail.com
-
----
-
-## 🎉 Quick Checklist Before Deploy
-
-- [ ] Tested locally - works?
-- [ ] Photo showing correctly?
-- [ ] All commands work?
-- [ ] Mobile view looks good?
-- [ ] Updated contact info?
-
-✅ All checked? **DEPLOY NOW!**
-
----
-
-## 🌟 Pro Tips
-
-1. **GitHub**: Create repo named `YOUR-USERNAME.github.io` for custom URL
-2. **SEO**: Add your domain to Google Search Console
-3. **Analytics**: Add Google Analytics (optional)
-4. **Share**: Update LinkedIn with your portfolio link
-5. **Backup**: Keep these files safe!
-
----
-
-## 📊 What Makes This Special?
-
-✨ **Unique ID Card Pull Mechanism**
-✨ **Full Terminal Interface with 20+ Commands**
-✨ **Matrix Rain Effect**
-✨ **Easter Eggs & Hidden Features**
-✨ **Two Portfolio Modes** (Terminal + Normal)
-✨ **100% Responsive**
-✨ **Zero Dependencies**
-✨ **Professional Yet Fun**
-
----
-
-## 🚀 Ready to Deploy?
-
-Pick ONE method and go:
-
-1. **Netlify** - Drag & drop (2 minutes)
-2. **GitHub Pages** - Free hosting (5 minutes)
-3. **Vercel** - Fast deployment (3 minutes)
-
-Then share your link:
-- LinkedIn profile
-- Resume
-- Email signature
-- GitHub README
-
----
-
-**Your portfolio is AWESOME! Go show it to the world! 🌍**
-
-Made with 💚 by Santosh Dahit

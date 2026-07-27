@@ -3,2991 +3,1956 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Santosh Dahit - Terminal Portfolio</title>
+    <meta name="theme-color" content="#111111">
+    <meta name="description" content="Santosh Dahit — Backend Engineer. Spring Boot, AWS, and scalable systems built in Seoul.">
+    <title>Santosh Dahit — Backend Engineer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Fragment+Mono:ital@0;1&display=swap" rel="stylesheet">
     <style>
-        * {
+        *, *::before, *::after {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
 
         :root {
-            --terminal-bg: #0a0e27;
-            --terminal-text: #00ff41;
-            --terminal-prompt: #ff00ff;
-            --terminal-error: #ff4444;
-            --terminal-success: #00ff41;
-            --terminal-info: #00d9ff;
-            --card-bg: #1a1f3a;
-            --card-border: #00ff41;
+            /* DevSync palette */
+            --bg: #111111;
+            --bg-deep: #0b0b0b;
+            --surface: #191818;
+            --card: #25282b;
+            --card-hi: #2c2f33;
+            --line: #3a3b3c;
+            --line-soft: rgba(255, 255, 255, 0.08);
+            --ink: #ffffff;
+            --muted: #b5b5b5;
+            --faint: #505559;
+            --accent: #7af298;
+            --accent-dim: rgba(122, 242, 152, 0.14);
+            --accent-line: rgba(122, 242, 152, 0.35);
+
+            --display: 'Space Grotesk', 'Noto Sans KR', system-ui, sans-serif;
+            --mono: 'Fragment Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+
+            --shell: 1280px;
+            --gutter: clamp(1.25rem, 4vw, 4rem);
+            --radius: 18px;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            -webkit-text-size-adjust: 100%;
+            overflow-x: hidden;
         }
 
         body {
-            font-family: 'Courier New', monospace;
-            background: var(--terminal-bg);
-            color: var(--terminal-text);
-            overflow: hidden;
-            height: 100vh;
+            font-family: var(--display);
+            font-weight: 400;
+            font-size: 1rem;
+            line-height: 1.65;
+            color: var(--muted);
+            background: var(--bg);
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
         }
 
-        /* Hanger Section */
-        .hanger-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            z-index: 1000;
-            transition: opacity 0.5s ease, visibility 0.5s ease;
-            overflow: hidden;
-        }
-
-        .hanger-container.hidden {
-            opacity: 0;
-            visibility: hidden;
-            pointer-events: none;
-        }
-
-        /* The hanger bar at the top */
-        .hanger-bar {
-            width: 100%;
-            background: linear-gradient(180deg, #1a1f3a 0%, #0d1226 100%);
-            padding: 20px 0;
-            border-bottom: 4px solid var(--terminal-success);
-            box-shadow: 0 10px 40px rgba(0, 255, 65, 0.3);
-            position: relative;
-            z-index: 10;
-        }
-
-        .hanger-title {
-            text-align: center;
-            font-size: 2rem;
-            color: var(--terminal-success);
-            text-shadow: 0 0 20px var(--terminal-success), 0 0 40px var(--terminal-success);
-            letter-spacing: 4px;
-            animation: glowPulse 2s ease-in-out infinite;
-        }
-
-        .hanger-subtitle {
-            text-align: center;
-            font-size: 0.9rem;
-            color: var(--terminal-info);
-            margin-top: 8px;
-            opacity: 0.8;
-            letter-spacing: 2px;
-        }
-
-        @keyframes glowPulse {
-            0%, 100% { text-shadow: 0 0 20px var(--terminal-success), 0 0 40px var(--terminal-success); }
-            50% { text-shadow: 0 0 30px var(--terminal-success), 0 0 60px var(--terminal-success), 0 0 80px var(--terminal-success); }
-        }
-
-        /* Hook on the hanger */
-        .hanger-hook {
-            position: absolute;
-            bottom: -25px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 50px;
-            height: 50px;
-        }
-
-        .hook-svg {
-            width: 100%;
-            height: 100%;
-            filter: drop-shadow(0 5px 10px rgba(0, 255, 65, 0.5));
-        }
-
-        .hook-path {
-            fill: none;
-            stroke: var(--terminal-success);
-            stroke-width: 4;
-            stroke-linecap: round;
-        }
-
-        /* ID Card Section - hangs from the hook */
-        .id-card-container {
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin-top: 20px;
-            perspective: 1000px;
-            animation: swayHanging 4s ease-in-out infinite;
-            transform-origin: top center;
-        }
-
-        @keyframes swayHanging {
-            0%, 100% { transform: rotate(-1deg); }
-            50% { transform: rotate(1deg); }
-        }
-
-        .id-card-container:hover {
-            animation-play-state: paused;
-        }
-
-        .id-card {
-            width: 400px;
-            height: 250px;
-            background: linear-gradient(135deg, #1a1f3a 0%, #2d3561 50%, #1a1f3a 100%);
-            border-radius: 15px;
-            border: 2px solid var(--card-border);
-            box-shadow:
-                0 20px 60px rgba(0, 255, 65, 0.3),
-                inset 0 1px 0 rgba(255,255,255,0.1),
-                inset 0 -1px 0 rgba(0,0,0,0.3);
-            position: relative;
-            overflow: visible;
-            cursor: grab;
-            transform-origin: top center;
-            will-change: transform;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            transform-style: preserve-3d;
-        }
-
-        /* 3D depth layers */
-        .id-card::before {
+        /* Subtle grid wash behind everything */
+        body::before {
             content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(
-                135deg,
-                transparent 0%,
-                rgba(0, 255, 65, 0.05) 50%,
-                transparent 100%
-            );
-            border-radius: 15px;
-            pointer-events: none;
-        }
-
-        /* Holographic shine effect */
-        .id-card::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 50%;
-            height: 100%;
-            background: linear-gradient(
-                90deg,
-                transparent,
-                rgba(255, 255, 255, 0.1),
-                transparent
-            );
-            transform: skewX(-25deg);
-            animation: holographicShine 4s ease-in-out infinite;
-            pointer-events: none;
-            border-radius: 15px;
-        }
-
-        @keyframes holographicShine {
-            0%, 100% { left: -100%; }
-            50% { left: 150%; }
-        }
-
-        .id-card:hover {
-            box-shadow:
-                0 30px 80px rgba(0, 255, 65, 0.5),
-                0 0 30px rgba(0, 255, 65, 0.3),
-                inset 0 1px 0 rgba(255,255,255,0.2);
-            transform: rotateX(-5deg) rotateY(5deg) translateZ(20px);
-        }
-
-        .id-card:active {
-            cursor: grabbing;
-        }
-
-        /* ID Card chip */
-        .id-chip {
-            position: absolute;
-            top: 15px;
-            right: 20px;
-            width: 40px;
-            height: 30px;
-            background: linear-gradient(135deg, #ffd700 0%, #ffaa00 50%, #ffd700 100%);
-            border-radius: 5px;
-            box-shadow: inset 0 2px 4px rgba(255,255,255,0.5), inset 0 -2px 4px rgba(0,0,0,0.3);
-        }
-
-        .id-chip::before {
-            content: '';
-            position: absolute;
-            top: 5px;
-            left: 5px;
-            right: 5px;
-            bottom: 5px;
-            border: 1px solid rgba(0,0,0,0.2);
-            border-radius: 3px;
-        }
-
-        .id-chip::after {
-            content: '';
-            position: absolute;
-            top: 8px;
-            left: 8px;
-            width: 24px;
-            height: 14px;
-            background: repeating-linear-gradient(
-                90deg,
-                rgba(0,0,0,0.1) 0px,
-                rgba(0,0,0,0.1) 2px,
-                transparent 2px,
-                transparent 4px
-            );
-        }
-
-        /* Barcode on ID */
-        .id-barcode {
-            position: absolute;
-            bottom: 15px;
-            right: 20px;
-            width: 80px;
-            height: 25px;
-            background: repeating-linear-gradient(
-                90deg,
-                #fff 0px,
-                #fff 2px,
-                #000 2px,
-                #000 4px,
-                #fff 4px,
-                #fff 5px,
-                #000 5px,
-                #000 8px,
-                #fff 8px,
-                #fff 10px
-            );
-            border-radius: 2px;
-        }
-
-        .id-card-content {
-            padding: 20px;
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            height: 100%;
-        }
-
-        .id-photo {
-            width: 120px;
-            height: 120px;
-            border-radius: 10px;
-            border: 3px solid var(--card-border);
-            object-fit: cover;
-            box-shadow: 0 5px 15px rgba(0, 255, 65, 0.3);
-        }
-
-        .id-info {
-            flex: 1;
-        }
-
-        .id-info h2 {
-            color: var(--terminal-success);
-            font-size: 1.5rem;
-            margin-bottom: 10px;
-            text-shadow: 0 0 10px var(--terminal-success);
-        }
-
-        .id-info p {
-            color: var(--terminal-info);
-            margin: 5px 0;
-            font-size: 0.9rem;
-        }
-
-        /* Lanyard connecting ID card to hook - goes UPWARD */
-        .lanyard-top {
-            width: 80px;
-            height: 100px;
-            position: relative;
-            display: flex;
-            justify-content: center;
-        }
-
-        .lanyard-strap-top {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            overflow: visible;
-        }
-
-        .strap-path-top {
-            fill: none;
-            stroke: url(#strapGradientTop);
-            stroke-width: 12;
-            stroke-linecap: round;
-            filter: drop-shadow(2px 2px 3px rgba(0,0,0,0.3));
-        }
-
-        /* Clip that attaches to the ID card */
-        .id-clip {
-            width: 40px;
-            height: 25px;
-            background: linear-gradient(180deg, #c0c0c0 0%, #808080 50%, #a0a0a0 100%);
-            border-radius: 5px 5px 0 0;
-            position: relative;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
-            margin-bottom: -2px;
-        }
-
-        .id-clip::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 30px;
-            height: 8px;
-            background: linear-gradient(180deg, #909090 0%, #606060 100%);
-            border-radius: 0 0 3px 3px;
-        }
-
-        /* Simple pull hint below card */
-        .pull-hint {
-            position: absolute;
-            bottom: -50px;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            pointer-events: none;
-        }
-
-        .pull-hint-arrows {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 2px;
-        }
-
-        .pull-hint-arrow {
-            font-size: 1.2rem;
-            color: var(--terminal-success);
-            text-shadow: 0 0 15px var(--terminal-success);
-            opacity: 0;
-            animation: arrowFall 2s ease-in-out infinite;
-        }
-
-        .pull-hint-arrow:nth-child(1) { animation-delay: 0s; }
-        .pull-hint-arrow:nth-child(2) { animation-delay: 0.2s; }
-        .pull-hint-arrow:nth-child(3) { animation-delay: 0.4s; }
-
-        @keyframes arrowFall {
-            0% { opacity: 0; transform: translateY(-10px); }
-            50% { opacity: 1; transform: translateY(5px); }
-            100% { opacity: 0; transform: translateY(15px); }
-        }
-
-        .pull-hint-text {
-            font-size: 0.7rem;
-            color: var(--terminal-info);
-            letter-spacing: 3px;
-            margin-top: 10px;
-            text-transform: uppercase;
-            animation: textPulse 2s ease-in-out infinite;
-        }
-
-        @keyframes textPulse {
-            0%, 100% { opacity: 0.4; }
-            50% { opacity: 1; }
-        }
-
-        /* Floating particles effect */
-        .particles {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            overflow: hidden;
-        }
-
-        .particle {
-            position: absolute;
-            width: 4px;
-            height: 4px;
-            background: var(--terminal-success);
-            border-radius: 50%;
-            opacity: 0;
-            animation: floatUp 3s infinite;
-        }
-
-        .particle:nth-child(1) { left: 20%; animation-delay: 0s; }
-        .particle:nth-child(2) { left: 40%; animation-delay: 0.5s; }
-        .particle:nth-child(3) { left: 60%; animation-delay: 1s; }
-        .particle:nth-child(4) { left: 80%; animation-delay: 1.5s; }
-        .particle:nth-child(5) { left: 30%; animation-delay: 2s; }
-        .particle:nth-child(6) { left: 70%; animation-delay: 2.5s; }
-
-        @keyframes floatUp {
-            0% { bottom: 0; opacity: 0; transform: scale(0); }
-            20% { opacity: 1; transform: scale(1); }
-            80% { opacity: 1; }
-            100% { bottom: 100%; opacity: 0; transform: scale(0); }
-        }
-
-        /* Shake animation when almost ready to unhook */
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-3px) rotate(-1deg); }
-            75% { transform: translateX(3px) rotate(1deg); }
-        }
-
-        /* Instruction text animation */
-        .hanger-subtitle {
-            animation: fadeInOut 3s ease-in-out infinite;
-        }
-
-        @keyframes fadeInOut {
-            0%, 100% { opacity: 0.6; }
-            50% { opacity: 1; }
-        }
-
-        /* ===== 3D GUIDE CHARACTER ===== */
-        .guide-character {
             position: fixed;
-            bottom: 0;
-            right: 20px;
-            z-index: 9999;
-            display: flex;
-            flex-direction: column;
-            align-items: flex-end;
-            pointer-events: auto;
-        }
-
-        /* Speech bubble */
-        .speech-bubble {
-            background: rgba(22, 33, 62, 0.95);
-            border: 2px solid var(--terminal-info);
-            border-radius: 15px;
-            padding: 15px 20px;
-            margin-bottom: 10px;
-            max-width: 260px;
-            position: relative;
-            box-shadow: 0 10px 30px rgba(0, 217, 255, 0.3);
-            animation: bubblePop 0.5s ease-out;
-            margin-left: 20px;
-        }
-
-        @keyframes bubblePop {
-            0% { transform: scale(0); opacity: 0; }
-            50% { transform: scale(1.1); }
-            100% { transform: scale(1); opacity: 1; }
-        }
-
-        .speech-bubble::after {
-            content: '';
-            position: absolute;
-            bottom: -10px;
-            right: 80px;
-            width: 0;
-            height: 0;
-            border-left: 10px solid transparent;
-            border-right: 10px solid transparent;
-            border-top: 10px solid var(--terminal-info);
-        }
-
-        .speech-bubble::before {
-            content: '';
-            position: absolute;
-            bottom: -6px;
-            right: 82px;
-            width: 0;
-            height: 0;
-            border-left: 8px solid transparent;
-            border-right: 8px solid transparent;
-            border-top: 8px solid rgba(22, 33, 62, 0.95);
-            z-index: 1;
-        }
-
-        .speech-text {
-            color: var(--terminal-info);
-            font-size: 0.85rem;
-            line-height: 1.5;
-        }
-
-        .speech-text .highlight {
-            color: var(--terminal-success);
-            font-weight: bold;
-        }
-
-        /* 3D Model Container */
-        .character-3d {
-            width: 280px;
-            height: 380px;
-            position: relative;
-            overflow: hidden;
-            border-radius: 0;
-        }
-
-        .character-3d iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-            pointer-events: auto;
-        }
-
-        /* Glowing platform under the 3D model */
-        .character-platform {
-            position: absolute;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 150px;
-            height: 20px;
-            background: radial-gradient(ellipse at center, rgba(0, 255, 65, 0.4) 0%, transparent 70%);
-            filter: blur(10px);
-            animation: platformGlow 2s ease-in-out infinite;
-        }
-
-        @keyframes platformGlow {
-            0%, 100% { opacity: 0.5; transform: translateX(-50%) scale(1); }
-            50% { opacity: 1; transform: translateX(-50%) scale(1.2); }
-        }
-
-        /* Guide content wrapper */
-        .guide-content {
-            display: flex;
-            flex-direction: row-reverse;
-            align-items: flex-end;
-            gap: 15px;
-        }
-
-        /* Command Panel Toggle Button */
-        .guide-commands-toggle {
-            display: none;
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--terminal-info), #0066cc);
-            border: 2px solid var(--terminal-info);
-            color: white;
-            font-size: 1.2rem;
-            font-weight: bold;
-            cursor: pointer;
-            box-shadow: 0 5px 20px rgba(0, 217, 255, 0.4);
-            transition: all 0.3s ease;
-            align-self: flex-end;
-            margin-bottom: 10px;
-        }
-
-        .guide-commands-toggle:hover {
-            transform: scale(1.1);
-            box-shadow: 0 8px 25px rgba(0, 217, 255, 0.6);
-        }
-
-        .guide-commands-toggle.active {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .toggle-icon {
-            animation: pulse 2s ease-in-out infinite;
-        }
-
-        /* Command Panel next to character */
-        .guide-commands {
-            display: none;
-            flex-direction: column;
-            gap: 8px;
-            background: rgba(22, 33, 62, 0.95);
-            border: 2px solid var(--terminal-info);
-            border-radius: 12px;
-            padding: 12px;
-            min-width: 140px;
-            box-shadow: 0 5px 20px rgba(0, 217, 255, 0.3);
-            animation: popIn 0.3s ease-out;
-        }
-
-        @keyframes popIn {
-            from {
-                opacity: 0;
-                transform: scale(0.8) translateX(20px);
-            }
-            to {
-                opacity: 1;
-                transform: scale(1) translateX(0);
-            }
-        }
-
-        .guide-commands.active {
-            display: flex;
-        }
-
-        .guide-commands-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 5px;
-            padding-bottom: 8px;
-            border-bottom: 1px solid rgba(0, 217, 255, 0.3);
-        }
-
-        .guide-commands-title {
-            color: var(--terminal-info);
-            font-size: 0.75rem;
-            font-weight: bold;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .guide-commands-close {
-            background: none;
-            border: none;
-            color: var(--terminal-info);
-            font-size: 1.2rem;
-            cursor: pointer;
-            padding: 0 5px;
-            line-height: 1;
-            transition: all 0.2s ease;
-        }
-
-        .guide-commands-close:hover {
-            color: var(--terminal-error);
-            transform: scale(1.2);
-        }
-
-        .guide-cmd {
-            color: var(--terminal-success);
-            font-family: 'Fira Code', monospace;
-            font-size: 0.85rem;
-            padding: 8px 12px;
-            background: rgba(0, 255, 65, 0.1);
-            border: 1px solid rgba(0, 255, 65, 0.3);
-            border-radius: 6px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .guide-cmd:hover {
-            background: rgba(0, 255, 65, 0.25);
-            border-color: var(--terminal-success);
-            transform: translateX(5px);
-            box-shadow: 0 0 10px rgba(0, 255, 65, 0.4);
-        }
-
-        .guide-cmd::before {
-            content: '$ ';
-            color: var(--terminal-info);
-        }
-
-        @keyframes slideInRight {
-            from {
-                opacity: 0;
-                transform: translateX(-20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
-        }
-
-        /* ===== DECORATIVE ELEMENTS ===== */
-        .floating-icons {
-            position: fixed;
-            width: 100%;
-            height: 100%;
+            inset: 0;
+            z-index: 0;
             pointer-events: none;
-            overflow: hidden;
-            z-index: 1;
+            background-image:
+                linear-gradient(to right, rgba(255, 255, 255, 0.022) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255, 255, 255, 0.022) 1px, transparent 1px);
+            background-size: 76px 76px;
+            mask-image: radial-gradient(ellipse 90% 60% at 50% 0%, #000 20%, transparent 75%);
+            -webkit-mask-image: radial-gradient(ellipse 90% 60% at 50% 0%, #000 20%, transparent 75%);
         }
 
-        .floating-icon {
-            position: absolute;
-            font-size: 1.5rem;
-            opacity: 0.3;
-            animation: floatAround 15s linear infinite;
+        ::selection {
+            background: var(--accent);
+            color: #0b0b0b;
         }
 
-        .floating-icon:nth-child(1) { top: 20%; left: 10%; animation-delay: 0s; animation-duration: 20s; }
-        .floating-icon:nth-child(2) { top: 60%; left: 85%; animation-delay: 2s; animation-duration: 18s; }
-        .floating-icon:nth-child(3) { top: 80%; left: 20%; animation-delay: 4s; animation-duration: 22s; }
-        .floating-icon:nth-child(4) { top: 30%; left: 75%; animation-delay: 6s; animation-duration: 16s; }
-        .floating-icon:nth-child(5) { top: 70%; left: 60%; animation-delay: 8s; animation-duration: 19s; }
-        .floating-icon:nth-child(6) { top: 15%; left: 40%; animation-delay: 10s; animation-duration: 21s; }
-
-        @keyframes floatAround {
-            0% { transform: translateY(0) rotate(0deg); opacity: 0.2; }
-            25% { transform: translateY(-30px) rotate(90deg); opacity: 0.4; }
-            50% { transform: translateY(0) rotate(180deg); opacity: 0.2; }
-            75% { transform: translateY(30px) rotate(270deg); opacity: 0.4; }
-            100% { transform: translateY(0) rotate(360deg); opacity: 0.2; }
+        a {
+            color: inherit;
+            text-decoration: none;
         }
 
-        /* Scanning lines effect */
-        .scan-lines {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: repeating-linear-gradient(
-                0deg,
-                transparent,
-                transparent 2px,
-                rgba(0, 255, 65, 0.03) 2px,
-                rgba(0, 255, 65, 0.03) 4px
-            );
-            pointer-events: none;
-            z-index: 999;
-            animation: scanMove 8s linear infinite;
-        }
-
-        @keyframes scanMove {
-            0% { background-position: 0 0; }
-            100% { background-position: 0 100px; }
-        }
-
-        /* Corner decorations */
-        .corner-decor {
-            position: fixed;
-            width: 100px;
-            height: 100px;
-            border: 2px solid var(--terminal-success);
-            opacity: 0.3;
-            pointer-events: none;
-        }
-
-        .corner-decor.top-left {
-            top: 20px;
-            left: 20px;
-            border-right: none;
-            border-bottom: none;
-        }
-
-        .corner-decor.top-right {
-            top: 20px;
-            right: 20px;
-            border-left: none;
-            border-bottom: none;
-        }
-
-        .corner-decor.bottom-left {
-            bottom: 20px;
-            left: 20px;
-            border-right: none;
-            border-top: none;
-        }
-
-        .corner-decor.bottom-right {
-            bottom: 20px;
-            right: 20px;
-            border-left: none;
-            border-top: none;
-        }
-
-        /* Status bar at bottom */
-        .status-bar {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 25px;
-            background: rgba(22, 33, 62, 0.9);
-            border-top: 1px solid var(--terminal-success);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 20px;
-            font-size: 0.7rem;
-            color: var(--terminal-info);
-            z-index: 1000;
-        }
-
-        .status-item {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .status-dot {
-            width: 6px;
-            height: 6px;
-            background: var(--terminal-success);
-            border-radius: 50%;
-            animation: statusPulse 2s infinite;
-        }
-
-        @keyframes statusPulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.3; }
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 0.6; }
-            50% { opacity: 1; }
-        }
-
-        /* Terminal Section */
-        .terminal-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            opacity: 0;
-            visibility: hidden;
-            pointer-events: none;
-            transition: opacity 0.5s ease, visibility 0.5s ease;
-            z-index: 500;
-        }
-
-        .terminal-container.active {
-            opacity: 1;
-            visibility: visible;
-            pointer-events: auto;
-        }
-
-        .terminal-header {
-            background: #16213e;
-            padding: 10px 20px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            border-bottom: 2px solid var(--terminal-success);
-        }
-
-        .terminal-button {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            cursor: pointer;
-        }
-
-        .btn-close { background: #ff5f56; }
-        .btn-minimize { background: #ffbd2e; }
-        .btn-maximize { background: #27c93f; }
-
-        .btn-portfolio {
-            width: auto;
-            height: auto;
-            border-radius: 6px;
-            padding: 4px 12px;
-            background: linear-gradient(135deg, #ff00ff, #00d9ff);
-            color: #0a0e27;
-            font-size: 0.75rem;
-            font-weight: bold;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-left: auto;
-            margin-right: 10px;
-            transition: all 0.3s ease;
-            box-shadow: 0 0 10px rgba(255, 0, 255, 0.5), 0 0 20px rgba(0, 217, 255, 0.3);
-            animation: portfolioBtnGlow 2s ease-in-out infinite;
-        }
-
-        .btn-portfolio:hover {
-            transform: scale(1.05);
-            box-shadow: 0 0 20px rgba(255, 0, 255, 0.8), 0 0 40px rgba(0, 217, 255, 0.6);
-        }
-
-        @keyframes portfolioBtnGlow {
-            0%, 100% { box-shadow: 0 0 10px rgba(255, 0, 255, 0.5), 0 0 20px rgba(0, 217, 255, 0.3); }
-            50% { box-shadow: 0 0 20px rgba(255, 0, 255, 0.8), 0 0 30px rgba(0, 217, 255, 0.5); }
-        }
-
-        .terminal-title {
-            flex: 1;
-            text-align: center;
-            color: var(--terminal-info);
-            font-size: 0.9rem;
-        }
-
-        .terminal-body {
-            flex: 1;
-            padding: 20px;
-            padding-bottom: 100px; /* Space for fixed input at bottom */
-            overflow-y: auto;
-            background: var(--terminal-bg);
-        }
-
-        .terminal-output {
-            min-height: 100%;
-        }
-
-        /* Fixed input at bottom - only visible when terminal is active */
-        .terminal-input-container {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: var(--terminal-bg);
-            border-top: 1px solid var(--terminal-success);
-            padding: 15px 20px;
-            z-index: 100;
-            display: none; /* Hidden by default */
-        }
-
-        .terminal-container.active .terminal-input-container {
+        img {
+            max-width: 100%;
             display: block;
         }
 
-        .terminal-line {
-            margin-bottom: 10px;
-            line-height: 1.6;
+        h1, h2, h3, h4 {
+            color: var(--ink);
+            font-weight: 500;
+            line-height: 1.05;
+            letter-spacing: -0.03em;
         }
 
-        .prompt {
-            color: var(--terminal-prompt);
+        /* ---------- Layout primitives ---------- */
+        .shell {
+            width: 100%;
+            max-width: var(--shell);
+            margin-inline: auto;
+            padding-inline: var(--gutter);
         }
 
-        .command {
-            color: var(--terminal-success);
+        section {
+            position: relative;
+            z-index: 1;
+            padding-block: clamp(4.5rem, 9vw, 8.5rem);
         }
 
-        .output {
-            color: #ffffff;
-            margin-left: 20px;
+        section + section {
+            border-top: 1px solid var(--line-soft);
         }
 
-        .error {
-            color: var(--terminal-error);
-            margin-left: 20px;
+        .eyebrow {
+            font-family: var(--mono);
+            font-size: 0.8125rem;
+            letter-spacing: 0.02em;
+            color: var(--accent);
+            margin-bottom: 1.25rem;
         }
 
-        .success {
-            color: var(--terminal-success);
-        }
-
-        .info {
-            color: var(--terminal-info);
-        }
-
-        .warning {
-            color: #ffbd2e;
-        }
-
-        .terminal-input-line {
+        .section-head {
             display: flex;
-            align-items: center;
-            gap: 10px;
+            flex-wrap: wrap;
+            align-items: flex-end;
+            justify-content: space-between;
+            gap: 1.75rem;
+            margin-bottom: clamp(2.5rem, 5vw, 4rem);
         }
 
-        #terminal-input {
-            flex: 1;
-            background: transparent;
-            border: none;
-            color: var(--terminal-success);
-            font-family: 'Courier New', monospace;
+        .section-title {
+            font-size: clamp(2rem, 5.2vw, 3.75rem);
+            max-width: 20ch;
+        }
+
+        .section-note {
             font-size: 1rem;
-            outline: none;
-            caret-color: var(--terminal-success);
+            color: var(--muted);
+            max-width: 38ch;
         }
 
-        #terminal-input::placeholder {
-            color: rgba(0, 255, 65, 0.3);
+        /* ---------- Buttons ---------- */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            padding: 0.9rem 1.6rem;
+            border-radius: 999px;
+            border: 1px solid transparent;
+            font-family: var(--display);
+            font-size: 0.9375rem;
+            font-weight: 500;
+            letter-spacing: -0.01em;
+            cursor: pointer;
+            transition: transform 0.25s ease, background 0.25s ease, border-color 0.25s ease, color 0.25s ease;
         }
 
-        .input-hint {
-            font-size: 0.75rem;
-            color: rgba(0, 217, 255, 0.5);
-            margin-top: 8px;
-            text-align: center;
+        .btn:hover {
+            transform: translateY(-2px);
         }
 
-        .cursor {
-            display: inline-block;
-            width: 10px;
-            height: 18px;
-            background: var(--terminal-success);
-            animation: blink 1s infinite;
+        .btn-primary {
+            background: var(--accent);
+            color: #0b0b0b;
         }
 
-        @keyframes blink {
-            0%, 49% { opacity: 1; }
-            50%, 100% { opacity: 0; }
+        .btn-primary:hover {
+            background: #96f7ad;
         }
 
-        /* Skill badges in terminal */
-        .skill-badge {
-            display: inline-block;
-            background: rgba(0, 255, 65, 0.1);
-            border: 1px solid var(--terminal-success);
-            color: var(--terminal-success);
-            padding: 5px 10px;
-            margin: 3px;
-            border-radius: 5px;
-            font-size: 0.85rem;
+        .btn-ghost {
+            background: transparent;
+            border-color: var(--line);
+            color: var(--ink);
         }
 
-        /* Project cards in terminal */
-        .project-card-terminal {
-            border: 1px solid var(--terminal-info);
-            padding: 15px;
-            margin: 10px 0;
-            border-radius: 5px;
-            background: rgba(0, 217, 255, 0.05);
+        .btn-ghost:hover {
+            border-color: var(--accent-line);
+            color: var(--accent);
         }
 
-        .project-card-terminal h3 {
-            color: var(--terminal-info);
-            margin-bottom: 10px;
+        .btn .arrow {
+            font-family: var(--mono);
+            font-size: 0.9em;
+            transition: transform 0.25s ease;
         }
 
-        .project-card-terminal p {
-            color: #ffffff;
-            margin-bottom: 10px;
+        .btn:hover .arrow {
+            transform: translateX(3px);
         }
 
-        .project-tag {
-            display: inline-block;
-            background: rgba(0, 217, 255, 0.2);
-            border: 1px solid var(--terminal-info);
-            color: var(--terminal-info);
-            padding: 3px 8px;
-            margin: 3px;
-            border-radius: 3px;
-            font-size: 0.75rem;
-        }
-
-        /* ASCII Art */
-        .ascii-art {
-            color: var(--terminal-success);
-            line-height: 1.2;
-            font-size: 0.8rem;
-            text-align: left;
-            margin: 0;
-            padding: 0;
-            overflow-x: auto;
-        }
-
-        /* Help panel */
-        .help-panel {
-            border: 1px solid var(--terminal-success);
-            padding: 15px;
-            margin: 10px 0;
-            border-radius: 5px;
-            background: rgba(0, 255, 65, 0.05);
-        }
-
-        /* Section header box */
-        .section-header {
-            border: 2px solid var(--terminal-success);
-            padding: 10px 20px;
-            margin: 10px 0;
-            text-align: center;
-            color: var(--terminal-success);
-            font-weight: bold;
-            letter-spacing: 2px;
-            background: rgba(0, 255, 65, 0.05);
-        }
-
-        .help-command {
-            color: var(--terminal-info);
-            font-weight: bold;
-        }
-
-        .help-description {
-            color: #ffffff;
-            margin-left: 20px;
-        }
-
-        /* Matrix rain effect */
-        #matrix-canvas {
+        /* ---------- Progress bar ---------- */
+        .progress-bar {
             position: fixed;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            opacity: 0.15;
+            height: 2px;
+            width: 0;
+            background: var(--accent);
+            z-index: 200;
+            transition: width 0.1s linear;
         }
 
-        /* Typing effect */
-        .typing {
-            overflow: hidden;
-            border-right: 2px solid var(--terminal-success);
-            white-space: nowrap;
-            animation: typing 2s steps(40) 1s forwards, blink-caret 0.75s step-end infinite;
-        }
-
-        @keyframes typing {
-            from { width: 0; }
-            to { width: 100%; }
-        }
-
-        @keyframes blink-caret {
-            from, to { border-color: transparent; }
-            50% { border-color: var(--terminal-success); }
-        }
-
-        /* Scrollbar styling */
-        .terminal-body::-webkit-scrollbar {
-            width: 10px;
-        }
-
-        .terminal-body::-webkit-scrollbar-track {
-            background: #16213e;
-        }
-
-        .terminal-body::-webkit-scrollbar-thumb {
-            background: var(--terminal-success);
-            border-radius: 5px;
-        }
-
-        .terminal-body::-webkit-scrollbar-thumb:hover {
-            background: var(--terminal-info);
-        }
-
-        /* Easter egg - glitch effect */
-        .glitch {
-            animation: glitch 0.3s infinite;
-        }
-
-        @keyframes glitch {
-            0% { transform: translate(0); }
-            20% { transform: translate(-2px, 2px); }
-            40% { transform: translate(-2px, -2px); }
-            60% { transform: translate(2px, 2px); }
-            80% { transform: translate(2px, -2px); }
-            100% { transform: translate(0); }
-        }
-
-        /* Command history indicator */
-        .history-indicator {
+        /* ---------- Header ---------- */
+        header {
             position: fixed;
-            bottom: 10px;
-            right: 10px;
-            color: var(--terminal-info);
-            font-size: 0.8rem;
-            opacity: 0.6;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 150;
+            transition: background 0.3s ease, border-color 0.3s ease, backdrop-filter 0.3s ease;
+            border-bottom: 1px solid transparent;
         }
 
-        /* Responsive */
-        @media (max-width: 768px) {
-            .hanger-title {
-                font-size: 1.3rem;
-                letter-spacing: 2px;
+        header.scrolled {
+            background: rgba(17, 17, 17, 0.82);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border-bottom-color: var(--line-soft);
+        }
+
+        header nav {
+            width: 100%;
+            max-width: var(--shell);
+            margin-inline: auto;
+            padding: 1.15rem var(--gutter);
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .logo {
+            font-family: var(--mono);
+            font-size: 1.0625rem;
+            color: var(--ink);
+            letter-spacing: -0.02em;
+            margin-right: auto;
+        }
+
+        .logo span {
+            color: var(--accent);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            font-family: var(--mono);
+            font-size: 0.8125rem;
+            color: var(--muted);
+            position: relative;
+            transition: color 0.2s ease;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: -5px;
+            height: 1px;
+            width: 0;
+            background: var(--accent);
+            transition: width 0.25s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--ink);
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .lang-switch-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            font-family: var(--mono);
+            font-size: 0.75rem;
+            padding: 0.55rem 0.95rem;
+            border-radius: 999px;
+            border: 1px solid var(--line);
+            background: transparent;
+            color: var(--muted);
+            cursor: pointer;
+            transition: border-color 0.25s ease, color 0.25s ease;
+        }
+
+        .lang-switch-btn:hover {
+            border-color: var(--accent-line);
+            color: var(--accent);
+        }
+
+        .nav-cta {
+            padding: 0.6rem 1.25rem;
+            font-size: 0.875rem;
+        }
+
+        .menu-toggle {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            background: none;
+            border: 0;
+            cursor: pointer;
+            padding: 6px;
+        }
+
+        .menu-toggle span {
+            display: block;
+            width: 22px;
+            height: 1.5px;
+            background: var(--ink);
+            transition: transform 0.3s ease, opacity 0.2s ease;
+        }
+
+        .menu-toggle.active span:nth-child(1) {
+            transform: translateY(6.5px) rotate(45deg);
+        }
+
+        .menu-toggle.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .menu-toggle.active span:nth-child(3) {
+            transform: translateY(-6.5px) rotate(-45deg);
+        }
+
+        .mobile-nav {
+            position: fixed;
+            inset: 0;
+            z-index: 149;
+            background: var(--bg);
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            padding: 5.5rem var(--gutter) 2.5rem;
+            /* clip, so the closed menu can never bleed past its own box */
+            overflow-y: auto;
+            transform: translateY(-100%);
+            transition: transform 0.4s cubic-bezier(0.65, 0, 0.35, 1);
+        }
+
+        /* Auto margins centre the links when there's room but fall back to the
+           top when there isn't, which keeps them scrollable on short (landscape)
+           viewports. justify-content: center would strand the first link. */
+        .mobile-link:first-of-type {
+            margin-top: auto;
+        }
+
+        .mobile-link:last-of-type {
+            margin-bottom: auto;
+        }
+
+        .mobile-nav.active {
+            transform: translateY(0);
+        }
+
+        .mobile-link {
+            font-size: clamp(1.75rem, 8vw, 2.75rem);
+            color: var(--ink);
+            font-weight: 500;
+            letter-spacing: -0.03em;
+            padding: 0.35rem 0;
+            border-bottom: 1px solid var(--line-soft);
+        }
+
+        .mobile-link .idx {
+            font-family: var(--mono);
+            font-size: 0.75rem;
+            color: var(--accent);
+            vertical-align: super;
+            margin-right: 0.6rem;
+        }
+
+        /* ---------- Hero ---------- */
+        .hero {
+            min-height: 100svh;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding-top: clamp(8rem, 18vh, 12rem);
+            padding-bottom: clamp(2.5rem, 5vw, 4rem);
+            border-top: 0;
+        }
+
+        .hero::after {
+            content: '';
+            position: absolute;
+            top: -10%;
+            left: 50%;
+            width: min(1000px, 100%);
+            height: 600px;
+            transform: translateX(-50%);
+            background: radial-gradient(ellipse at center, rgba(122, 242, 152, 0.09), transparent 65%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .hero-inner {
+            width: 100%;
+            max-width: var(--shell);
+            margin-inline: auto;
+            padding-inline: var(--gutter);
+        }
+
+        .hero-greet {
+            font-family: var(--mono);
+            font-size: 0.875rem;
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .hero-greet::before {
+            content: '';
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--accent);
+            box-shadow: 0 0 0 4px var(--accent-dim);
+            animation: pulse 2.4s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 0 3px var(--accent-dim); }
+            50% { box-shadow: 0 0 0 8px rgba(122, 242, 152, 0.05); }
+        }
+
+        .hero-title {
+            font-size: clamp(2.6rem, 8.4vw, 7rem);
+            font-weight: 500;
+            letter-spacing: -0.045em;
+            color: var(--ink);
+        }
+
+        .hero-title em {
+            font-style: normal;
+            color: var(--faint);
+        }
+
+        .hero-name {
+            font-family: var(--mono);
+            font-size: clamp(0.8125rem, 1.6vw, 1rem);
+            letter-spacing: 0.28em;
+            text-transform: uppercase;
+            color: var(--muted);
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--line-soft);
+        }
+
+        .hero-lower {
+            display: grid;
+            grid-template-columns: 1.15fr 1fr;
+            gap: clamp(2rem, 5vw, 5rem);
+            align-items: end;
+            margin-top: clamp(2.5rem, 6vw, 4.5rem);
+        }
+
+        .hero-lede {
+            font-size: clamp(1rem, 1.35vw, 1.125rem);
+            color: var(--muted);
+            max-width: 46ch;
+        }
+
+        .hero-meta {
+            display: flex;
+            flex-direction: column;
+            gap: 0.65rem;
+            font-family: var(--mono);
+            font-size: 0.875rem;
+        }
+
+        .hero-meta a,
+        .hero-meta span {
+            color: var(--muted);
+            transition: color 0.2s ease;
+        }
+
+        .hero-meta a:hover {
+            color: var(--accent);
+        }
+
+        .hero-meta .label {
+            color: var(--faint);
+            margin-right: 0.5rem;
+        }
+
+        .hero-ctas {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            margin-top: clamp(2rem, 4vw, 3rem);
+        }
+
+        .hero-foot {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            margin-top: clamp(2.5rem, 6vw, 4rem);
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--line-soft);
+        }
+
+        .scroll-cue {
+            font-family: var(--mono);
+            font-size: 0.75rem;
+            letter-spacing: 0.3em;
+            color: var(--faint);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            transition: color 0.25s ease;
+        }
+
+        .scroll-cue:hover {
+            color: var(--accent);
+        }
+
+        .scroll-cue::after {
+            content: '';
+            width: 48px;
+            height: 1px;
+            background: linear-gradient(to right, var(--faint), transparent);
+        }
+
+        .hero-open-to {
+            font-family: var(--mono);
+            font-size: 0.75rem;
+            color: var(--faint);
+        }
+
+        /* ---------- Skills (code-comment block) ---------- */
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+            gap: 1px;
+            background: var(--line-soft);
+            border: 1px solid var(--line-soft);
+            border-radius: var(--radius);
+            overflow: hidden;
+        }
+
+        .skill-group {
+            background: var(--bg);
+            padding: clamp(1.5rem, 2.5vw, 2.25rem);
+            transition: background 0.3s ease;
+        }
+
+        .skill-group:hover {
+            background: var(--surface);
+        }
+
+        .skill-group h3 {
+            font-family: var(--mono);
+            font-size: 0.8125rem;
+            font-weight: 400;
+            letter-spacing: 0;
+            line-height: 1.4;
+            color: var(--accent);
+            margin-bottom: 1.25rem;
+            /* reserve two lines so every column's list starts on the same baseline */
+            min-height: 2.8em;
+        }
+
+        .skill-group ul {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.55rem;
+        }
+
+        .skill-group li {
+            font-size: 0.9375rem;
+            color: var(--muted);
+            display: flex;
+            gap: 0.6rem;
+            transition: color 0.2s ease;
+        }
+
+        .skill-group li::before {
+            content: '↳';
+            font-family: var(--mono);
+            font-size: 0.75rem;
+            color: var(--faint);
+            flex: none;
+            line-height: 1.7;
+        }
+
+        .skill-group li:hover {
+            color: var(--ink);
+        }
+
+        /* ---------- About ---------- */
+        .about-grid {
+            display: grid;
+            grid-template-columns: 0.85fr 1.15fr;
+            gap: clamp(2rem, 5vw, 4.5rem);
+            align-items: start;
+        }
+
+        .about-photo-wrap {
+            position: relative;
+            border: 1px solid var(--line);
+            border-radius: var(--radius);
+            overflow: hidden;
+            background: var(--card);
+        }
+
+        .about-photo-wrap img {
+            width: 100%;
+            aspect-ratio: 4 / 5;
+            object-fit: cover;
+            object-position: center 20%;
+            filter: grayscale(1) contrast(1.05);
+            transition: filter 0.5s ease, transform 0.6s ease;
+        }
+
+        .about-photo-wrap:hover img {
+            filter: grayscale(0) contrast(1);
+            transform: scale(1.02);
+        }
+
+        .photo-tag {
+            position: absolute;
+            left: 0.85rem;
+            bottom: 0.85rem;
+            font-family: var(--mono);
+            font-size: 0.6875rem;
+            padding: 0.4rem 0.7rem;
+            border-radius: 999px;
+            background: rgba(11, 11, 11, 0.7);
+            backdrop-filter: blur(8px);
+            border: 1px solid var(--line);
+            color: var(--accent);
+        }
+
+        .about-body p {
+            font-size: clamp(1rem, 1.3vw, 1.1875rem);
+            color: var(--muted);
+        }
+
+        .about-body p + p {
+            margin-top: 1.15rem;
+        }
+
+        .about-body strong {
+            color: var(--ink);
+            font-weight: 500;
+        }
+
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1px;
+            background: var(--line-soft);
+            border: 1px solid var(--line-soft);
+            border-radius: var(--radius);
+            overflow: hidden;
+            margin-top: clamp(2rem, 4vw, 3rem);
+        }
+
+        .stat-card {
+            background: var(--bg);
+            padding: 1.6rem 1.4rem;
+            transition: background 0.3s ease;
+        }
+
+        .stat-card:hover {
+            background: var(--surface);
+        }
+
+        .stat-number {
+            font-size: clamp(2rem, 3.4vw, 2.75rem);
+            font-weight: 500;
+            letter-spacing: -0.04em;
+            color: var(--ink);
+            line-height: 1;
+        }
+
+        .stat-number span {
+            color: var(--accent);
+        }
+
+        .stat-label {
+            font-family: var(--mono);
+            font-size: 0.75rem;
+            color: var(--faint);
+            margin-top: 0.65rem;
+        }
+
+        /* ---------- Projects ---------- */
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
+            gap: 1.25rem;
+        }
+
+        .project-card {
+            display: flex;
+            flex-direction: column;
+            background: var(--surface);
+            border: 1px solid var(--line);
+            border-radius: var(--radius);
+            padding: 1.75rem;
+            transition: transform 0.3s ease, border-color 0.3s ease, background 0.3s ease;
+        }
+
+        .project-card:hover {
+            transform: translateY(-6px);
+            border-color: var(--accent-line);
+            background: var(--card);
+        }
+
+        .project-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .project-glyph {
+            width: 46px;
+            height: 46px;
+            display: grid;
+            place-items: center;
+            border-radius: 12px;
+            background: var(--accent-dim);
+            border: 1px solid var(--accent-line);
+            font-size: 1.375rem;
+        }
+
+        .project-index {
+            font-family: var(--mono);
+            font-size: 0.75rem;
+            color: var(--faint);
+        }
+
+        .project-client {
+            font-family: var(--mono);
+            font-size: 0.6875rem;
+            color: var(--faint);
+            margin-bottom: 0.5rem;
+        }
+
+        .project-card h3 {
+            font-size: 1.375rem;
+            margin-bottom: 0.7rem;
+        }
+
+        .store-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.4rem;
+            margin-top: 1rem;
+        }
+
+        .store-link {
+            font-family: var(--mono);
+            font-size: 0.6875rem;
+            padding: 0.35rem 0.7rem;
+            border-radius: 999px;
+            border: 1px solid var(--accent-line);
+            background: var(--accent-dim);
+            color: var(--accent);
+            white-space: nowrap;
+            transition: background 0.25s ease, transform 0.25s ease;
+        }
+
+        .store-link:hover {
+            background: rgba(122, 242, 152, 0.24);
+            transform: translateY(-2px);
+        }
+
+        .project-desc {
+            font-size: 0.9375rem;
+            color: var(--muted);
+            flex: 1;
+        }
+
+        .tag-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.4rem;
+            margin-top: 1.5rem;
+            padding-top: 1.25rem;
+            border-top: 1px solid var(--line-soft);
+        }
+
+        .tag {
+            font-family: var(--mono);
+            font-size: 0.6875rem;
+            padding: 0.32rem 0.65rem;
+            border-radius: 6px;
+            border: 1px solid var(--line);
+            color: var(--muted);
+            white-space: nowrap;
+        }
+
+        .project-card:hover .tag {
+            border-color: rgba(122, 242, 152, 0.22);
+        }
+
+        /* ---------- Services (numbered rows) ---------- */
+        .services {
+            border: 1px solid var(--line-soft);
+            border-radius: var(--radius);
+            overflow: hidden;
+        }
+
+        .service {
+            display: grid;
+            grid-template-columns: auto 1fr auto;
+            align-items: start;
+            gap: clamp(1rem, 3vw, 2.5rem);
+            padding: clamp(1.5rem, 3vw, 2.25rem);
+            background: var(--bg);
+            transition: background 0.3s ease;
+        }
+
+        .service + .service {
+            border-top: 1px solid var(--line-soft);
+        }
+
+        .service:hover {
+            background: var(--surface);
+        }
+
+        .service-num {
+            font-family: var(--mono);
+            font-size: 0.8125rem;
+            color: var(--accent);
+            padding-top: 0.45rem;
+            min-width: 3.5rem;
+        }
+
+        .service h3 {
+            font-size: clamp(1.25rem, 2.4vw, 1.75rem);
+            margin-bottom: 0.7rem;
+        }
+
+        .service p {
+            font-size: 0.9375rem;
+            color: var(--muted);
+            max-width: 62ch;
+        }
+
+        .service-hire {
+            font-family: var(--mono);
+            font-size: 0.75rem;
+            color: var(--faint);
+            white-space: nowrap;
+            padding-top: 0.45rem;
+            transition: color 0.25s ease, transform 0.25s ease;
+        }
+
+        .service:hover .service-hire {
+            color: var(--accent);
+            transform: translateX(-3px);
+        }
+
+        /* ---------- Process ---------- */
+        .process-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 1.25rem;
+        }
+
+        .process-card {
+            background: var(--surface);
+            border: 1px solid var(--line);
+            border-radius: var(--radius);
+            padding: clamp(1.6rem, 2.6vw, 2.25rem);
+            transition: border-color 0.3s ease, transform 0.3s ease;
+        }
+
+        .process-card:hover {
+            border-color: var(--accent-line);
+            transform: translateY(-4px);
+        }
+
+        .process-num {
+            font-family: var(--mono);
+            font-size: 2.75rem;
+            line-height: 1;
+            color: var(--line);
+            margin-bottom: 1.5rem;
+            transition: color 0.3s ease;
+        }
+
+        .process-card:hover .process-num {
+            color: var(--accent);
+        }
+
+        .process-card h3 {
+            font-size: 1.3125rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .process-card p {
+            font-size: 0.9375rem;
+        }
+
+        /* ---------- Experience timeline ---------- */
+        .timeline {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .tl-item {
+            display: grid;
+            grid-template-columns: minmax(180px, 0.4fr) 1fr;
+            gap: clamp(1rem, 4vw, 3.5rem);
+            padding-block: clamp(1.75rem, 3.5vw, 2.75rem);
+            border-top: 1px solid var(--line-soft);
+        }
+
+        .tl-item:last-child {
+            border-bottom: 1px solid var(--line-soft);
+        }
+
+        .tl-when {
+            font-family: var(--mono);
+            font-size: 0.8125rem;
+            color: var(--faint);
+        }
+
+        .tl-when .place {
+            display: block;
+            color: var(--accent);
+            margin-bottom: 0.45rem;
+        }
+
+        /* Team avatar from Kayple's own about page */
+        .tl-avatar {
+            display: block;
+            width: 132px;
+            height: 132px;
+            margin-top: 1.35rem;
+            border-radius: 16px;
+            background: radial-gradient(circle at 50% 45%, rgba(122, 242, 152, 0.13), transparent 70%);
+        }
+
+        .tl-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            margin-top: 0.9rem;
+            font-family: var(--mono);
+            font-size: 0.75rem;
+            color: var(--muted);
+            padding-bottom: 2px;
+            border-bottom: 1px solid var(--line);
+            transition: color 0.25s ease, border-color 0.25s ease;
+        }
+
+        .tl-link:hover {
+            color: var(--accent);
+            border-bottom-color: var(--accent-line);
+        }
+
+        .tl-body h3 {
+            font-size: clamp(1.25rem, 2.2vw, 1.625rem);
+            margin-bottom: 0.6rem;
+        }
+
+        .tl-tagline {
+            font-family: var(--mono);
+            font-size: 0.8125rem;
+            color: var(--muted);
+            margin-bottom: 1.25rem;
+        }
+
+        .tl-body ul {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
+        }
+
+        .tl-body li {
+            font-size: 0.9375rem;
+            color: var(--muted);
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .tl-body li::before {
+            content: '—';
+            color: var(--faint);
+            flex: none;
+        }
+
+        .tl-body strong {
+            color: var(--ink);
+            font-weight: 500;
+        }
+
+        /* ---------- Contact ---------- */
+        .contact-list {
+            display: flex;
+            flex-direction: column;
+            margin-top: 2rem;
+        }
+
+        .contact-row {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding-block: 1.15rem;
+            border-top: 1px solid var(--line-soft);
+        }
+
+        .contact-row:last-child {
+            border-bottom: 1px solid var(--line-soft);
+        }
+
+        .contact-row .ico {
+            width: 38px;
+            height: 38px;
+            flex: none;
+            display: grid;
+            place-items: center;
+            border-radius: 10px;
+            border: 1px solid var(--line);
+            background: var(--surface);
+            font-size: 1rem;
+        }
+
+        .contact-row .k {
+            font-family: var(--mono);
+            font-size: 0.6875rem;
+            color: var(--faint);
+            display: block;
+            margin-bottom: 0.2rem;
+        }
+
+        .contact-row .v {
+            color: var(--ink);
+            font-size: 0.9375rem;
+        }
+
+        .contact-row a.v:hover {
+            color: var(--accent);
+        }
+
+        .contact-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            margin-top: 2rem;
+        }
+
+        /* ---------- Footer ---------- */
+        footer {
+            position: relative;
+            z-index: 1;
+            border-top: 1px solid var(--line-soft);
+            padding-block: clamp(3rem, 6vw, 4.5rem) 2rem;
+        }
+
+        .footer-top {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: flex-end;
+            justify-content: space-between;
+            gap: 2rem;
+            padding-bottom: clamp(2.5rem, 5vw, 3.5rem);
+            border-bottom: 1px solid var(--line-soft);
+        }
+
+        .footer-cta {
+            font-size: clamp(1.75rem, 5vw, 3.25rem);
+            max-width: 22ch;
+        }
+
+        .socials {
+            display: flex;
+            gap: 0.6rem;
+        }
+
+        .socials a {
+            width: 44px;
+            height: 44px;
+            display: grid;
+            place-items: center;
+            border-radius: 50%;
+            border: 1px solid var(--line);
+            font-family: var(--mono);
+            font-size: 0.75rem;
+            color: var(--muted);
+            transition: border-color 0.25s ease, color 0.25s ease, transform 0.25s ease;
+        }
+
+        .socials a:hover {
+            border-color: var(--accent-line);
+            color: var(--accent);
+            transform: translateY(-3px);
+        }
+
+        .footer-bottom {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.75rem;
+            padding-top: 1.75rem;
+            font-family: var(--mono);
+            font-size: 0.75rem;
+            color: var(--faint);
+        }
+
+        /* ---------- Reveal ---------- */
+        .reveal {
+            opacity: 0;
+            transform: translateY(26px);
+            transition: opacity 0.7s ease, transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        .reveal.visible {
+            opacity: 1;
+            transform: none;
+        }
+
+        /* ---------- Responsive ---------- */
+        @media (max-width: 1000px) {
+            .about-grid,
+            .hero-lower {
+                grid-template-columns: 1fr;
             }
 
-            .hanger-subtitle {
-                font-size: 0.75rem;
+            .about-photo-wrap {
+                max-width: 320px;
             }
 
-            .hanger-bar {
-                padding: 15px 0;
-            }
-
-            .id-card {
-                width: 100%;
-                max-width: 340px;
-                height: 220px;
-            }
-
-            .id-photo {
-                width: 85px;
-                height: 85px;
-            }
-
-            .id-info h2 {
-                font-size: 1.15rem;
-            }
-
-            .id-info p {
-                font-size: 0.75rem;
-            }
-
-            .lanyard-top {
-                height: 80px;
-                width: 60px;
-            }
-
-            .strap-path-top {
-                stroke-width: 10;
-            }
-
-            .pull-hint-arrow {
-                font-size: 1rem;
-            }
-
-            .pull-hint-text {
-                font-size: 0.6rem;
-            }
-
-            .id-clip {
-                width: 35px;
-                height: 20px;
-            }
-
-            .terminal-body {
-                font-size: 0.8rem;
-                padding: 10px;
-                padding-bottom: 120px; /* Space for fixed input */
-                text-align: left;
-            }
-
-            .terminal-output {
-                text-align: left;
-                width: 100%;
-            }
-
-            .terminal-line {
-                text-align: left;
-                word-wrap: break-word;
-                overflow-wrap: break-word;
-            }
-
-            .ascii-art, pre {
-                text-align: left;
-                margin: 0;
-                padding: 0;
-                font-size: 0.5rem;
-                overflow-x: auto;
-                white-space: pre;
-            }
-
-            .guide-commands {
-                min-width: 100px;
-                padding: 8px;
-            }
-
-            .guide-cmd {
-                font-size: 0.75rem;
-                padding: 6px 8px;
-            }
-
-            /* Mobile terminal input fixes */
-            .terminal-input-container {
-                padding: 12px 15px;
-                z-index: 10000; /* Higher z-index for mobile */
-            }
-
-            #terminal-input {
-                font-size: 16px; /* Prevents iOS zoom on focus */
-                padding: 12px;
-                min-height: 44px; /* Better touch target */
-            }
-
-            .input-hint {
-                font-size: 0.7rem;
-                margin-top: 6px;
+            .tl-item {
+                grid-template-columns: 1fr;
+                gap: 1rem;
             }
         }
 
-        @media (max-width: 480px) {
-            .hanger-title {
-                font-size: 1rem;
-                letter-spacing: 1px;
-            }
-
-            .hanger-subtitle {
-                font-size: 0.65rem;
-            }
-
-            .hanger-bar {
-                padding: 12px 0;
-            }
-
-            .hanger-hook {
-                width: 40px;
-                height: 40px;
-                bottom: -20px;
-            }
-
-            .id-card {
-                max-width: 300px;
-                height: 200px;
-            }
-
-            .id-photo {
-                width: 70px;
-                height: 70px;
-            }
-
-            .id-info h2 {
-                font-size: 1rem;
-            }
-
-            .id-info p {
-                font-size: 0.7rem;
-            }
-
-            .lanyard-top {
-                height: 60px;
-                width: 50px;
-            }
-
-            .strap-path-top {
-                stroke-width: 8;
-            }
-
-            .pull-hint-text {
-                font-size: 0.5rem;
-            }
-
-            .pull-hint-arrow {
-                font-size: 0.8rem;
-            }
-
-            .id-clip {
-                width: 30px;
-                height: 18px;
-            }
-
-            .pull-hint {
-                bottom: -40px;
-            }
-
-            /* Adjust 3D model size on mobile */
-            .guide-character {
-                bottom: 120px;
-                right: 10px;
-                transform: scale(0.6);
-                transform-origin: bottom right;
-            }
-
-            .speech-bubble {
-                max-width: 200px;
-                padding: 10px 15px;
-            }
-
-            .speech-text {
-                font-size: 0.75rem;
-            }
-
-            .guide-content {
-                flex-direction: column;
-                gap: 10px;
-            }
-
-            .guide-commands {
-                min-width: 120px;
-                padding: 8px;
-            }
-
-            .guide-cmd {
-                font-size: 0.7rem;
-                padding: 5px 8px;
-            }
-
-            .character-3d {
-                width: 200px;
-                height: 280px;
-            }
-
-            .terminal-body {
-                font-size: 0.75rem;
-                padding: 8px;
-                padding-bottom: 120px; /* Space for fixed input */
-                text-align: left;
-            }
-
-            .terminal-output {
-                text-align: left;
-                width: 100%;
-            }
-
-            .terminal-line {
-                text-align: left;
-                word-wrap: break-word;
-                overflow-wrap: break-word;
-            }
-
-            .ascii-art, pre {
-                text-align: left;
-                margin: 0;
-                padding: 0;
-                font-size: 0.45rem;
-                overflow-x: auto;
-                white-space: pre;
-            }
-
-            /* Adjust 3D model size on small mobile screens */
-            .guide-character {
-                bottom: 110px;
-                right: 5px;
-                transform: scale(0.55);
-                transform-origin: bottom right;
-            }
-
-            /* Mobile terminal input fixes for small screens */
-            .terminal-input-container {
-                padding: 10px 12px;
-                z-index: 10000;
-            }
-
-            #terminal-input {
-                font-size: 16px;
-                padding: 10px;
-                min-height: 44px;
-            }
-
-            .input-hint {
-                font-size: 0.65rem;
-                margin-top: 5px;
-            }
-
-            /* Hide floating icons on small screens */
-            .floating-icons {
+        @media (max-width: 860px) {
+            .nav-links,
+            .nav-cta {
                 display: none;
             }
 
-            .corner-decor {
-                width: 50px;
-                height: 50px;
+            .menu-toggle {
+                display: flex;
+            }
+
+            .service {
+                grid-template-columns: auto 1fr;
+            }
+
+            .service-hire {
+                grid-column: 2;
+                padding-top: 0.75rem;
             }
         }
 
-        /* Loading screen */
-        .loading-screen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: var(--terminal-bg);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 9999;
-            transition: opacity 0.5s ease;
+        @media (max-width: 560px) {
+            .hero-foot {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.85rem;
+            }
+
+            .btn {
+                padding: 0.8rem 1.3rem;
+            }
         }
 
-        .loading-screen.hidden {
-            opacity: 0;
-            pointer-events: none;
-        }
+        @media (prefers-reduced-motion: reduce) {
+            html {
+                scroll-behavior: auto;
+            }
 
-        .loading-text {
-            color: var(--terminal-success);
-            font-size: 1.5rem;
-            animation: pulse 1.5s infinite;
-        }
+            *, *::before, *::after {
+                animation-duration: 0.001ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.001ms !important;
+            }
 
-        /* GUI Container */
-        .gui-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100vh;
-            background: var(--terminal-bg);
-            display: flex;
-            flex-direction: column;
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity 0.5s ease, visibility 0.5s ease;
-            z-index: 2000;
-        }
-
-        .gui-container.active {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        .gui-header {
-            background: #16213e;
-            padding: 15px 20px;
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            border-bottom: 2px solid var(--terminal-success);
-        }
-
-        .back-to-terminal {
-            background: var(--terminal-success);
-            color: var(--terminal-bg);
-            border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
-            font-family: 'Courier New', monospace;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .back-to-terminal:hover {
-            background: var(--terminal-info);
-            transform: translateX(-5px);
-        }
-
-        .gui-title {
-            color: var(--terminal-info);
-            font-size: 1.1rem;
-        }
-
-        #guiFrame {
-            flex: 1;
-            width: 100%;
-            height: 100%;
-            border: none;
-            background: white;
+            .reveal {
+                opacity: 1;
+                transform: none;
+            }
         }
     </style>
 </head>
 <body>
-    <!-- Loading Screen -->
-    <div class="loading-screen" id="loadingScreen">
-        <div class="loading-text">Initializing Terminal...</div>
-    </div>
+    <div class="progress-bar" id="progressBar"></div>
 
-    <!-- Matrix rain background -->
-    <canvas id="matrix-canvas"></canvas>
-
-    <!-- Scan lines effect -->
-    <div class="scan-lines"></div>
-
-    <!-- Corner decorations -->
-    <div class="corner-decor top-left"></div>
-    <div class="corner-decor top-right"></div>
-    <div class="corner-decor bottom-left"></div>
-    <div class="corner-decor bottom-right"></div>
-
-    <!-- Floating tech icons -->
-    <div class="floating-icons" id="floatingIcons">
-        <div class="floating-icon">⚡</div>
-        <div class="floating-icon">💻</div>
-        <div class="floating-icon">🔧</div>
-        <div class="floating-icon">☕</div>
-        <div class="floating-icon">🚀</div>
-        <div class="floating-icon">&lt;/&gt;</div>
-    </div>
-
-    <!-- Status bar -->
-    <div class="status-bar" id="statusBar">
-        <div class="status-item">
-            <span class="status-dot"></span>
-            <span>SYSTEM ONLINE</span>
-        </div>
-        <div class="status-item">
-            <span id="currentTime"></span>
-        </div>
-        <div class="status-item">
-            <span>v2.0.0</span>
-        </div>
-    </div>
-
-    <!-- Hanger Container with ID Card -->
-    <div class="hanger-container" id="hangerContainer">
-        <!-- Floating particles -->
-        <div class="particles">
-            <div class="particle"></div>
-            <div class="particle"></div>
-            <div class="particle"></div>
-            <div class="particle"></div>
-            <div class="particle"></div>
-            <div class="particle"></div>
-        </div>
-
-        <!-- The Hanger Bar -->
-        <div class="hanger-bar">
-            <div class="hanger-title">WELCOME TO MY PORTFOLIO</div>
-            <div class="hanger-subtitle">Pull the ID card to enter terminal</div>
-            <!-- Hook SVG -->
-            <div class="hanger-hook">
-                <svg class="hook-svg" viewBox="0 0 50 50">
-                    <path class="hook-path" d="M25 0 L25 25 Q25 40, 25 45"/>
-                    <circle cx="25" cy="45" r="4" fill="var(--terminal-success)"/>
-                </svg>
+    <!-- Header -->
+    <header id="siteHeader">
+        <nav>
+            <a href="#" class="logo">santosh<span>.</span>dev</a>
+            <ul class="nav-links">
+                <li><a href="#about">About</a></li>
+                <li><a href="#projects">Projects</a></li>
+                <li><a href="#services">Services</a></li>
+                <li><a href="#experience">Experience</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+            <div class="nav-actions">
+                <a class="lang-switch-btn" href="portfolio-kr.html" hreflang="ko" lang="ko">🇰🇷 한국어</a>
+                <a href="#contact" class="btn btn-primary nav-cta">Get in Touch</a>
+                <button class="menu-toggle" id="menuToggle" aria-label="Toggle menu" aria-expanded="false">
+                    <span></span><span></span><span></span>
+                </button>
             </div>
-        </div>
+        </nav>
+    </header>
 
-        <!-- ID Card Container - hangs from the hook -->
-        <div class="id-card-container" id="idCardContainer">
-            <!-- Lanyard going UP to the hook -->
-            <div class="lanyard-top">
-                <svg class="lanyard-strap-top" viewBox="0 0 80 100">
-                    <defs>
-                        <linearGradient id="strapGradientTop" x1="0%" y1="0%" x2="100%" y2="0%">
-                            <stop offset="0%" style="stop-color:#00aa30"/>
-                            <stop offset="20%" style="stop-color:#00ff41"/>
-                            <stop offset="40%" style="stop-color:#00cc35"/>
-                            <stop offset="60%" style="stop-color:#00ff41"/>
-                            <stop offset="80%" style="stop-color:#00cc35"/>
-                            <stop offset="100%" style="stop-color:#00aa30"/>
-                        </linearGradient>
-                    </defs>
-                    <!-- Lanyard path going up with slight curve -->
-                    <path class="strap-path-top" d="M40 100 Q35 50, 40 0"/>
-                </svg>
+    <!-- Mobile nav -->
+    <nav class="mobile-nav" id="mobileNav">
+        <a href="#about" class="mobile-link"><span class="idx">01</span>About</a>
+        <a href="#skills" class="mobile-link"><span class="idx">02</span>Skills</a>
+        <a href="#projects" class="mobile-link"><span class="idx">03</span>Projects</a>
+        <a href="#services" class="mobile-link"><span class="idx">04</span>Services</a>
+        <a href="#experience" class="mobile-link"><span class="idx">05</span>Experience</a>
+        <a href="#contact" class="mobile-link"><span class="idx">06</span>Contact</a>
+    </nav>
+
+    <!-- Hero -->
+    <section class="hero">
+        <div class="hero-inner">
+            <p class="hero-greet">Hey, I'm Santosh</p>
+            <h1 class="hero-title">I'm a Backend<br>Engineer <em>in Seoul.</em></h1>
+            <p class="hero-name">Santosh Dahit — Kayple, South Korea</p>
+
+            <div class="hero-lower">
+                <p class="hero-lede">
+                    I build fast, scalable, production-grade backend systems with Spring Boot,
+                    AWS, and Docker — 7+ live applications serving thousands of users daily,
+                    monitored end to end with Prometheus and Grafana.
+                </p>
+                <div class="hero-meta">
+                    <a href="mailto:santoshdahit454@gmail.com"><span class="label">email</span>santoshdahit454@gmail.com</a>
+                    <a href="https://www.linkedin.com/in/santosh-dahit/" target="_blank" rel="noopener"><span class="label">linkedin</span>/in/santosh-dahit</a>
+                    <a href="https://github.com/SantoshDahit" target="_blank" rel="noopener"><span class="label">github</span>/SantoshDahit</a>
+                </div>
             </div>
 
-            <!-- Metal clip attaching lanyard to card -->
-            <div class="id-clip"></div>
+            <div class="hero-ctas">
+                <a href="#contact" class="btn btn-primary">Get In Touch <span class="arrow">→</span></a>
+                <a href="#projects" class="btn btn-ghost">View My Work <span class="arrow">↓</span></a>
+            </div>
 
-            <!-- The ID Card -->
-            <div class="id-card" id="idCard">
-                <!-- Smart chip -->
-                <div class="id-chip"></div>
+            <div class="hero-foot">
+                <a href="#skills" class="scroll-cue">SCROLL</a>
+                <p class="hero-open-to">// Available for backend &amp; cloud roles</p>
+            </div>
+        </div>
+    </section>
 
-                <div class="id-card-content">
-                    <img src="santosh-photo.jpg" alt="Santosh Dahit" class="id-photo">
-                    <div class="id-info">
-                        <h2>SANTOSH DAHIT</h2>
-                        <p>🔹 Backend Engineer</p>
-                        <p>🔹 Spring Boot Expert</p>
-                        <p>🔹 ID: DEV-2024-SD</p>
-                        <p>🔹 Status: <span class="success">ACTIVE</span></p>
+    <!-- Skills -->
+    <section id="skills">
+        <div class="shell">
+            <div class="section-head reveal">
+                <div>
+                    <p class="eyebrow">// Skills</p>
+                    <h2 class="section-title">The Stack I Build With</h2>
+                </div>
+                <p class="section-note">
+                    Java and Spring Boot at the core, wrapped in cloud infrastructure,
+                    containers, and observability — plus a data science background.
+                </p>
+            </div>
+
+            <div class="skills-grid reveal">
+                <div class="skill-group">
+                    <h3>// Backend</h3>
+                    <ul>
+                        <li>Spring Boot &amp; Spring Framework</li>
+                        <li>Core Java</li>
+                        <li>Spring Security &amp; JWT</li>
+                        <li>OOP &amp; Design Patterns</li>
+                        <li>REST APIs &amp; GraphQL</li>
+                        <li>In-app payments (Play Store, App Store, Toss)</li>
+                    </ul>
+                </div>
+
+                <div class="skill-group">
+                    <h3>// Database &amp; Cloud</h3>
+                    <ul>
+                        <li>SQL &amp; MySQL</li>
+                        <li>AWS (EC2, RDS, S3)</li>
+                        <li>GCP (Kubernetes, IAM, Cloud Run)</li>
+                        <li>Schema design &amp; query tuning</li>
+                        <li>Prometheus</li>
+                        <li>Grafana</li>
+                    </ul>
+                </div>
+
+                <div class="skill-group">
+                    <h3>// DevOps &amp; Tools</h3>
+                    <ul>
+                        <li>Docker</li>
+                        <li>Kubernetes</li>
+                        <li>Portainer</li>
+                        <li>Git &amp; GitHub</li>
+                        <li>CI/CD pipelines</li>
+                    </ul>
+                </div>
+
+                <div class="skill-group">
+                    <h3>// AI &amp; LLM</h3>
+                    <ul>
+                        <li>LLM Integration</li>
+                        <li>OpenAI &amp; Anthropic APIs</li>
+                        <li>Prompt Engineering</li>
+                        <li>RAG (pgvector)</li>
+                        <li>AI-Powered Features</li>
+                        <li>Spring AI</li>
+                    </ul>
+                </div>
+
+                <div class="skill-group">
+                    <h3>// ML &amp; Data Science</h3>
+                    <ul>
+                        <li>Python</li>
+                        <li>Pandas &amp; NumPy</li>
+                        <li>Scikit-learn</li>
+                        <li>TensorFlow</li>
+                        <li>OpenCV</li>
+                        <li>Power BI &amp; Tableau</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About -->
+    <section id="about">
+        <div class="shell">
+            <div class="section-head reveal">
+                <div>
+                    <p class="eyebrow">// About</p>
+                    <h2 class="section-title">Turning Ideas Into Reliable Systems</h2>
+                </div>
+            </div>
+
+            <div class="about-grid">
+                <div class="about-photo-wrap reveal">
+                    <img src="santosh-photo.jpg" alt="Santosh Dahit">
+                    <span class="photo-tag">Seoul, South Korea</span>
+                </div>
+
+                <div class="about-body reveal">
+                    <p>
+                        I'm a <strong>Backend Engineer</strong> at <strong>Kayple</strong>, a B2C startup in Seoul,
+                        where I architect and ship backend systems that serve thousands of users every day.
+                    </p>
+                    <p>
+                        I hold a <strong>Master's in Data Science</strong> from Kwangwoon University and a
+                        Bachelor's in Computer Engineering from Kyungdong University — so I bring both the
+                        theory and the production scars to every project.
+                    </p>
+                    <p>
+                        My focus is production-grade Spring Boot applications, comprehensive monitoring,
+                        and database performance. I like problems where a clean schema and a well-drawn
+                        API boundary do most of the work.
+                    </p>
+
+                    <div class="stats-row">
+                        <div class="stat-card">
+                            <div class="stat-number">2.5<span>+</span></div>
+                            <div class="stat-label">Years experience</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">7<span>+</span></div>
+                            <div class="stat-label">Live applications</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">1000<span>s</span></div>
+                            <div class="stat-label">Active users</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">2<span>×</span></div>
+                            <div class="stat-label">Degrees earned</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Projects -->
+    <section id="projects">
+        <div class="shell">
+            <div class="section-head reveal">
+                <div>
+                    <p class="eyebrow">// Projects</p>
+                    <h2 class="section-title">A Showcase of What I've Built</h2>
+                </div>
+                <p class="section-note">
+                    Client platforms delivered at Kayple, where I build and maintain the
+                    Spring Boot backend, database, and cloud infrastructure behind each product.
+                </p>
+            </div>
+
+            <div class="projects-grid">
+                <article class="project-card reveal">
+                    <div class="project-top">
+                        <div class="project-glyph">🗺️</div>
+                        <span class="project-index">(01)</span>
+                    </div>
+                    <p class="project-client">client: Many Korea</p>
+                    <h3>Many</h3>
+                    <p class="project-desc">A magazine-style travel guide introducing Korea's hidden gems and landmarks to foreign visitors, with full-text search.</p>
+                    <div class="store-links">
+                        <a class="store-link" href="https://www.manykorea.com/" target="_blank" rel="noopener">↗ Website</a>
+                    </div>
+                    <div class="tag-row">
+                        <span class="tag">Spring Boot</span>
+                        <span class="tag">MySQL</span>
+                        <span class="tag">Elasticsearch</span>
+                        <span class="tag">AWS</span>
+                        <span class="tag">Next.js</span>
+                    </div>
+                </article>
+                <article class="project-card reveal">
+                    <div class="project-top">
+                        <div class="project-glyph">🩸</div>
+                        <span class="project-index">(02)</span>
+                    </div>
+                    <p class="project-client">client: GM media</p>
+                    <h3>당대표 (Dangdaepyo)</h3>
+                    <p class="project-desc">A healthcare app that pairs with continuous glucose monitors to track blood sugar and build a long-term health record.</p>
+                    <div class="store-links">
+                        <a class="store-link" href="https://apps.apple.com/kr/app/%EB%8B%B9%EB%8C%80%ED%91%9C-%EB%8B%B9%EB%87%A8%EA%B4%80%EB%A6%AC-%EB%8B%B9%EB%87%A8%EC%88%98%EC%B2%A9-%ED%98%88%EB%8B%B9-%EA%B8%B0%EB%A1%9D-%EC%B8%A1%EC%A0%95-%EC%B2%B4%ED%81%AC/id6758602307" target="_blank" rel="noopener">↗ App Store</a>
+                        <a class="store-link" href="https://play.google.com/store/apps/details?id=com.dangdaepyo.dangdaepyo_user" target="_blank" rel="noopener">↗ Google Play</a>
+                    </div>
+                    <div class="tag-row">
+                        <span class="tag">Spring Boot</span>
+                        <span class="tag">MySQL</span>
+                        <span class="tag">AWS</span>
+                        <span class="tag">Firebase</span>
+                        <span class="tag">Flutter</span>
+                    </div>
+                </article>
+                <article class="project-card reveal">
+                    <div class="project-top">
+                        <div class="project-glyph">🎓</div>
+                        <span class="project-index">(03)</span>
+                    </div>
+                    <p class="project-client">client: Key Publishing</p>
+                    <h3>EDUFINGERS</h3>
+                    <p class="project-desc">A quiz-driven learning app that turns the walk to and from school into study time for K-12 students.</p>
+                    <div class="store-links">
+                        <a class="store-link" href="https://play.google.com/store/apps/details?id=kr.co.keymedia.edufingers" target="_blank" rel="noopener">↗ Google Play</a>
+                    </div>
+                    <div class="tag-row">
+                        <span class="tag">Spring Boot</span>
+                        <span class="tag">MySQL</span>
+                        <span class="tag">AWS</span>
+                        <span class="tag">Flutter</span>
+                    </div>
+                </article>
+                <article class="project-card reveal">
+                    <div class="project-top">
+                        <div class="project-glyph">🛍️</div>
+                        <span class="project-index">(04)</span>
+                    </div>
+                    <p class="project-client">client: Supporters Heroes</p>
+                    <h3>eggD</h3>
+                    <p class="project-desc">A matching platform that connects small-scale sellers directly with influencers, with search and messaging built in.</p>
+                    <div class="store-links">
+                        <a class="store-link" href="https://www.eggd.co.kr/" target="_blank" rel="noopener">↗ Website</a>
+                    </div>
+                    <div class="tag-row">
+                        <span class="tag">Spring Boot</span>
+                        <span class="tag">MySQL</span>
+                        <span class="tag">Elasticsearch</span>
+                        <span class="tag">AWS</span>
+                        <span class="tag">Next.js</span>
+                    </div>
+                </article>
+                <article class="project-card reveal">
+                    <div class="project-top">
+                        <div class="project-glyph">👷</div>
+                        <span class="project-index">(05)</span>
+                    </div>
+                    <p class="project-client">client: Daeseon Industrial Development</p>
+                    <h3>돈벌잡 (Don Beol Job)</h3>
+                    <p class="project-desc">Handles day-labour recruiting, attendance, and daily wage settlement for construction sites in a single platform.</p>
+                    <div class="store-links">
+                        <a class="store-link" href="https://play.google.com/store/apps/details?id=com.moneyjobja.user" target="_blank" rel="noopener">↗ Google Play</a>
+                    </div>
+                    <div class="tag-row">
+                        <span class="tag">Spring Boot</span>
+                        <span class="tag">MySQL</span>
+                        <span class="tag">Redis</span>
+                        <span class="tag">AWS</span>
+                        <span class="tag">Next.js</span>
+                    </div>
+                </article>
+                <article class="project-card reveal">
+                    <div class="project-top">
+                        <div class="project-glyph">👥</div>
+                        <span class="project-index">(06)</span>
+                    </div>
+                    <p class="project-client">client: BOSC</p>
+                    <h3>BOSC</h3>
+                    <p class="project-desc">A location-based social app for meeting people who share your interests at nearby venues — serving expats in Korea and abroad.</p>
+                    <div class="store-links">
+                        <a class="store-link" href="https://play.google.com/store/apps/details?id=club.bosc.app_user" target="_blank" rel="noopener">↗ Google Play</a>
+                    </div>
+                    <div class="tag-row">
+                        <span class="tag">Spring Boot</span>
+                        <span class="tag">MySQL</span>
+                        <span class="tag">Redis</span>
+                        <span class="tag">AWS</span>
+                        <span class="tag">Firebase</span>
+                    </div>
+                </article>
+                <article class="project-card reveal">
+                    <div class="project-top">
+                        <div class="project-glyph">🗳️</div>
+                        <span class="project-index">(07)</span>
+                    </div>
+                    <p class="project-client">in-house product · Kayple</p>
+                    <h3>투표24 (Vote24)</h3>
+                    <p class="project-desc">Kayple's own reward app: identity-verified anonymous voting where users swipe through live polls and earn points for every vote they cast.</p>
+                    <div class="store-links">
+                        <a class="store-link" href="https://play.google.com/store/apps/details?id=io.vote24.user" target="_blank" rel="noopener">↗ Google Play</a>
+                    </div>
+                    <div class="tag-row">
+                        <span class="tag">Spring Boot</span>
+                        <span class="tag">MySQL</span>
+                        <span class="tag">AWS</span>
+                        <span class="tag">Flutter</span>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services -->
+    <section id="services">
+        <div class="shell">
+            <div class="section-head reveal">
+                <div>
+                    <p class="eyebrow">// Services</p>
+                    <h2 class="section-title">End-to-End Backend Development</h2>
+                </div>
+                <p class="section-note">
+                    From the first schema sketch to the Grafana dashboard watching it in
+                    production — I can own the whole server side.
+                </p>
+            </div>
+
+            <div class="services reveal">
+                <div class="service">
+                    <span class="service-num">(01)</span>
+                    <div>
+                        <h3>API &amp; Backend Development</h3>
+                        <p>
+                            Spring Boot REST and GraphQL services built for speed and security —
+                            including authentication with Spring Security and JWT, and in-app
+                            payment integrations for Play Store, App Store, and Toss Payments.
+                        </p>
+                    </div>
+                    <a href="#contact" class="service-hire">Let's talk →</a>
+                </div>
+
+                <div class="service">
+                    <span class="service-num">(02)</span>
+                    <div>
+                        <h3>System Architecture &amp; Databases</h3>
+                        <p>
+                            Schema design, SQL optimisation, and RDS setup for applications that
+                            need to stay fast as they grow. I design the data model before the
+                            endpoints, not after.
+                        </p>
+                    </div>
+                    <a href="#contact" class="service-hire">Let's talk →</a>
+                </div>
+
+                <div class="service">
+                    <span class="service-num">(03)</span>
+                    <div>
+                        <h3>Cloud &amp; DevOps</h3>
+                        <p>
+                            Containerised deployments with Docker, orchestration on Kubernetes and
+                            Cloud Run, and infrastructure across AWS and GCP — managed with
+                            Portainer and repeatable pipelines.
+                        </p>
+                    </div>
+                    <a href="#contact" class="service-hire">Let's talk →</a>
+                </div>
+
+                <div class="service">
+                    <span class="service-num">(04)</span>
+                    <div>
+                        <h3>Monitoring &amp; Observability</h3>
+                        <p>
+                            Prometheus metrics and Grafana dashboards wired into live services, so
+                            problems show up on a graph before they show up in a support ticket.
+                        </p>
+                    </div>
+                    <a href="#contact" class="service-hire">Let's talk →</a>
+                </div>
+
+                <div class="service">
+                    <span class="service-num">(05)</span>
+                    <div>
+                        <h3>LLM &amp; AI Integration</h3>
+                        <p>
+                            Shipping LLM-backed features into production, not demos. In Many I built
+                            language translation and image generation; in 투표24 I used LLMs to generate
+                            polls automatically, calculate rewards, and validate submissions against
+                            profanity and abuse filters.
+                        </p>
+                    </div>
+                    <a href="#contact" class="service-hire">Let's talk →</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Process -->
+    <section id="process">
+        <div class="shell">
+            <div class="section-head reveal">
+                <div>
+                    <p class="eyebrow">// Process</p>
+                    <h2 class="section-title">My Development Work Process</h2>
+                </div>
+            </div>
+
+            <div class="process-grid">
+                <div class="process-card reveal">
+                    <div class="process-num">01</div>
+                    <h3>Plan &amp; Architect</h3>
+                    <p>
+                        Before the first line of code I map the requirements, the data model, and
+                        the API surface — clarifying constraints while they're still cheap to change.
+                    </p>
+                </div>
+
+                <div class="process-card reveal">
+                    <div class="process-num">02</div>
+                    <h3>Build &amp; Secure</h3>
+                    <p>
+                        Clean, maintainable Spring Boot services with authentication and
+                        authorisation designed in from the start, not bolted on before launch.
+                    </p>
+                </div>
+
+                <div class="process-card reveal">
+                    <div class="process-num">03</div>
+                    <h3>Ship &amp; Monitor</h3>
+                    <p>
+                        Dockerised deploys to AWS or GCP, then Prometheus and Grafana on top —
+                        plus the ongoing tuning that keeps a live product healthy.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Experience -->
+    <section id="experience">
+        <div class="shell">
+            <div class="section-head reveal">
+                <div>
+                    <p class="eyebrow">// Experience</p>
+                    <h2 class="section-title">Where I've Been</h2>
+                </div>
+            </div>
+
+            <div class="timeline">
+                <div class="tl-item reveal">
+                    <div class="tl-when">
+                        <span class="place">Kayple</span>
+                        Seoul, South Korea<br>
+                        Aug 2024 — Present<br>
+                        Full-time
+                        <img class="tl-avatar" src="santosh-avatar.png" alt="Santosh Dahit's team avatar from Kayple's about page" width="600" height="600" loading="lazy">
+                        <a class="tl-link" href="https://kayple.com/about" target="_blank" rel="noopener">↗ kayple.com/about</a>
+                    </div>
+                    <div class="tl-body">
+                        <h3>Back End Developer</h3>
+                        <p class="tl-tagline">// Building the endpoints that connect people to the server 😁</p>
+                        <ul>
+                            <li>Architected and deployed 7+ production applications serving thousands of users</li>
+                            <li>Led development of the EDUFINGERS learning platform with AWS and GCP integration</li>
+                            <li>Built the BOSC social networking platform on Spring Boot with Prometheus monitoring</li>
+                            <li>Developed EggD, an influencer–seller marketplace, with its full backend infrastructure</li>
+                            <li>Created the Many Korea tourism app with location-based services and Docker deployment</li>
+                            <li>Implemented Spring Security authentication systems across multiple projects</li>
+                            <li>Designed and optimised database schemas in SQL for high-performance applications</li>
+                        </ul>
                     </div>
                 </div>
 
-                <!-- Barcode -->
-                <div class="id-barcode"></div>
-
-                <!-- Pull hint below the card -->
-                <div class="pull-hint">
-                    <div class="pull-hint-arrows">
-                        <span class="pull-hint-arrow">▼</span>
-                        <span class="pull-hint-arrow">▼</span>
-                        <span class="pull-hint-arrow">▼</span>
+                <div class="tl-item reveal">
+                    <div class="tl-when">
+                        <span class="place">모라고</span>
+                        Freelance<br>
+                        Oct 2023 — Oct 2024<br>
+                        Part-time
                     </div>
-                    <span class="pull-hint-text">Pull Down</span>
+                    <div class="tl-body">
+                        <h3>Java Backend Developer</h3>
+                        <p class="tl-tagline">// Connecting freelance translators with foreigners living in Korea</p>
+                        <ul>
+                            <li>Developed backend services for the translator–client connection platform</li>
+                            <li>Implemented a Spring MVC architecture for a scalable application structure</li>
+                            <li>Integrated GraphQL for efficient API queries and data fetching</li>
+                            <li>Built real-time communication features for instant translation services</li>
+                            <li>Maintained and optimised the existing codebase for improved performance</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="tl-item reveal">
+                    <div class="tl-when">
+                        <span class="place">Education</span>
+                        Kwangwoon University<br>
+                        Kyungdong University<br>
+                        2017 — 2024
+                    </div>
+                    <div class="tl-body">
+                        <h3>Academic Background</h3>
+                        <p class="tl-tagline">// Data science on top of computer engineering</p>
+                        <ul>
+                            <li><strong>Master's in Data Science</strong> — Kwangwoon University (Sep 2022 – Aug 2024)</li>
+                            <li>Focus: data visualisation, data analytics, machine learning</li>
+                            <li><strong>Bachelor's in Computer Engineering</strong> — Kyungdong University (Sep 2017 – Aug 2021)</li>
+                            <li>Focus: Python, web development, algorithms and data structures</li>
+                            <li>Published research with a strong foundation in algorithms</li>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </div>
+    </section>
 
-    </div>
-
-    <!-- Guide Character with Command Panel (outside hanger for visibility in terminal) -->
-    <div class="guide-character" id="guideCharacter">
-        <div class="speech-bubble" id="speechBubble">
-            <div class="speech-text" id="speechText">
-                Hi there! 👋 Welcome to <span class="highlight">Santosh's Portfolio</span>!
-            </div>
-        </div>
-        <div class="guide-content">
-            <div class="character-3d">
-                <iframe title="Racing Miku 2014 Ver." frameborder="0" allowfullscreen mozallowfullscreen="true" webkitallowfullscreen="true" allow="autoplay; fullscreen; xr-spatial-tracking" src="https://sketchfab.com/models/c8dde6948d3b4dd88ee06b5ee15b2e20/embed?autostart=1&ui_theme=dark&ui_infos=0&ui_controls=0&ui_stop=0"></iframe>
-                <div class="character-platform"></div>
-            </div>
-            <!-- Command Panel Toggle Button -->
-            <button class="guide-commands-toggle" id="guideCommandsToggle" title="Show Commands">
-                <span class="toggle-icon">?</span>
-            </button>
-            <!-- Command Panel next to character (visible in terminal mode) -->
-            <div class="guide-commands" id="guideCommands">
-                <div class="guide-commands-header">
-                    <div class="guide-commands-title">Try these commands:</div>
-                    <button class="guide-commands-close" id="guideCommandsClose">&times;</button>
+    <!-- Contact -->
+    <section id="contact">
+        <div class="shell">
+            <div class="section-head reveal">
+                <div>
+                    <p class="eyebrow">// Contact</p>
+                    <h2 class="section-title">Let's Build Something Solid</h2>
                 </div>
-                <div class="guide-cmd" data-cmd="help">help</div>
-                <div class="guide-cmd" data-cmd="about">about</div>
-                <div class="guide-cmd" data-cmd="skills">skills</div>
-                <div class="guide-cmd" data-cmd="projects">projects</div>
-                <div class="guide-cmd" data-cmd="contact">contact</div>
-                <div class="guide-cmd" data-cmd="easter-egg">easter-egg</div>
+                <p class="section-note">
+                    Open to backend and cloud roles, freelance work, or just a good conversation
+                    about system design.
+                </p>
+            </div>
+
+            <div class="reveal">
+                    <div class="contact-list">
+                    <div class="contact-row">
+                        <div class="ico">📧</div>
+                        <div>
+                            <span class="k">Email</span>
+                            <a class="v" href="mailto:santoshdahit454@gmail.com">santoshdahit454@gmail.com</a>
+                        </div>
+                    </div>
+                    <div class="contact-row">
+                        <div class="ico">📍</div>
+                        <div>
+                            <span class="k">Location</span>
+                            <span class="v">Seoul, South Korea</span>
+                        </div>
+                    </div>
+                    <div class="contact-row">
+                        <div class="ico">💼</div>
+                        <div>
+                            <span class="k">LinkedIn</span>
+                            <a class="v" href="https://www.linkedin.com/in/santosh-dahit/" target="_blank" rel="noopener">linkedin.com/in/santosh-dahit</a>
+                        </div>
+                    </div>
+                    <div class="contact-row">
+                        <div class="ico">💻</div>
+                        <div>
+                            <span class="k">GitHub</span>
+                            <a class="v" href="https://github.com/SantoshDahit" target="_blank" rel="noopener">github.com/SantoshDahit</a>
+                        </div>
+                    </div>
+                    <div class="contact-row">
+                        <div class="ico">🟢</div>
+                        <div>
+                            <span class="k">Status</span>
+                            <span class="v">Open to opportunities</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="contact-actions">
+                    <a href="mailto:santoshdahit454@gmail.com" class="btn btn-primary">Email Me <span class="arrow">&rarr;</span></a>
+                    <a href="https://www.linkedin.com/in/santosh-dahit/" target="_blank" rel="noopener" class="btn btn-ghost">Message on LinkedIn <span class="arrow">&nearr;</span></a>
+                </div>
             </div>
         </div>
-    </div>
+    </section>
 
-    <!-- Terminal Container -->
-    <div class="terminal-container" id="terminalContainer">
-        <div class="terminal-header">
-            <div class="terminal-button btn-close"></div>
-            <div class="terminal-button btn-minimize"></div>
-            <div class="terminal-button btn-maximize"></div>
-            <div class="terminal-title">santosh@portfolio:~$</div>
-            <button class="terminal-button btn-portfolio" id="portfolioBtn" title="View Portfolio">Portfolio</button>
-        </div>
-        <div class="terminal-body">
-            <div class="terminal-output" id="terminalBody">
-                <!-- Terminal output will be added here -->
+    <!-- Footer -->
+    <footer>
+        <div class="shell">
+            <div class="footer-top">
+                <h2 class="footer-cta">Got a backend that needs building?</h2>
+                <div class="socials">
+                    <a href="https://www.linkedin.com/in/santosh-dahit/" target="_blank" rel="noopener" title="LinkedIn" aria-label="LinkedIn">in</a>
+                    <a href="https://github.com/SantoshDahit" target="_blank" rel="noopener" title="GitHub" aria-label="GitHub">gh</a>
+                    <a href="mailto:santoshdahit454@gmail.com" title="Email" aria-label="Email">@</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <span>© 2025 Santosh Dahit — Backend Engineer, Seoul</span>
+                <span>👁 Views: <span id="viewCount">0</span></span>
             </div>
         </div>
-        <!-- Fixed input at bottom -->
-        <div class="terminal-input-container" id="terminalInputContainer">
-            <div class="terminal-input-line">
-                <span class="prompt">santosh@portfolio:~$</span>
-                <input type="text" id="terminal-input" autocomplete="off" autofocus placeholder="Type a command...">
-            </div>
-            <div class="input-hint">↑↓ history • TAB autocomplete • Type 'help' for commands</div>
-        </div>
-    </div>
-
-    <!-- GUI Portfolio Container -->
-    <div class="gui-container" id="guiContainer">
-        <div class="gui-header">
-            <button class="back-to-terminal" id="backToTerminal">
-                ← Back to Terminal Mode
-            </button>
-            <div class="gui-title">Normal Portfolio View</div>
-        </div>
-        <iframe id="guiFrame" src="portfolio.html" frameborder="0"></iframe>
-    </div>
-
+    </footer>
 
     <script>
-        // Matrix rain effect
-        const canvas = document.getElementById('matrix-canvas');
-        const ctx = canvas.getContext('2d');
+        const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
+        // Scroll progress + header state
+        const siteHeader = document.getElementById('siteHeader');
+        const progressBar = document.getElementById('progressBar');
 
-        const matrix = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*()_+-=[]{}|;:,.<>?";
-        const fontSize = 16;
-        const columns = canvas.width / fontSize;
-        const drops = Array(Math.floor(columns)).fill(1);
-
-        function drawMatrix() {
-            ctx.fillStyle = 'rgba(10, 14, 39, 0.05)';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            
-            ctx.fillStyle = '#00ff41';
-            ctx.font = fontSize + 'px monospace';
-            
-            for (let i = 0; i < drops.length; i++) {
-                const text = matrix[Math.floor(Math.random() * matrix.length)];
-                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-                
-                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
-                    drops[i] = 0;
-                }
-                drops[i]++;
-            }
+        function onScroll() {
+            const scrollable = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            progressBar.style.width = (scrollable > 0 ? (window.scrollY / scrollable) * 100 : 0) + '%';
+            siteHeader.classList.toggle('scrolled', window.scrollY > 40);
         }
 
-        setInterval(drawMatrix, 35);
+        window.addEventListener('scroll', onScroll, { passive: true });
+        onScroll();
 
-        window.addEventListener('resize', () => {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        });
-
-        // Terminal functionality
-        const terminalBody = document.getElementById('terminalBody');
-        const hangerContainer = document.getElementById('hangerContainer');
-        const idCardContainer = document.getElementById('idCardContainer');
-        const terminalContainer = document.getElementById('terminalContainer');
-        const loadingScreen = document.getElementById('loadingScreen');
-        const guiContainer = document.getElementById('guiContainer');
-        const backToTerminalBtn = document.getElementById('backToTerminal');
-        const guideCommands = document.getElementById('guideCommands');
-        const guideCommandsToggle = document.getElementById('guideCommandsToggle');
-
-        let commandHistory = [];
-        let historyIndex = -1;
-        let currentInput = '';
-
-        // Back to terminal button
-        backToTerminalBtn.addEventListener('click', switchToTerminal);
-
-        // Portfolio button - direct access to GUI portfolio
-        document.getElementById('portfolioBtn').addEventListener('click', switchToGUI);
-
-        // Language state and iframe ref
-        let currentLang = 'en';
-        const guiFrame = document.getElementById('guiFrame');
-
-        // Listen for language switch messages from portfolio iframe
-        window.addEventListener('message', (event) => {
-            if (event.data && event.data.type === 'switchLang') {
-                const lang = event.data.lang;
-                if (lang === 'kr') {
-                    currentLang = 'kr';
-                    guiFrame.src = 'portfolio-kr.html';
-                } else if (lang === 'en') {
-                    currentLang = 'en';
-                    guiFrame.src = 'portfolio.html';
-                }
-            }
-        });
-
-        // Make guide command buttons clickable to execute commands
-        document.querySelectorAll('.guide-cmd').forEach(cmd => {
-            cmd.addEventListener('click', () => {
-                const command = cmd.getAttribute('data-cmd');
-                const input = document.getElementById('terminal-input');
-                if (input && command) {
-                    input.value = command;
-                    processCommand(command);
-                    input.value = '';
-                }
+        // Reveal on scroll
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (!entry.isIntersecting) return;
+                entry.target.classList.add('visible');
+                revealObserver.unobserve(entry.target);
             });
-        });
+        }, { threshold: 0.12, rootMargin: '0px 0px -80px 0px' });
 
-        // Toggle command panel visibility
-        const guideCommandsClose = document.getElementById('guideCommandsClose');
+        document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
 
-        if (guideCommandsToggle && guideCommands) {
-            guideCommandsToggle.addEventListener('click', () => {
-                guideCommands.classList.add('active');
-                guideCommandsToggle.style.display = 'none';
-            });
-        }
-
-        if (guideCommandsClose && guideCommands && guideCommandsToggle) {
-            guideCommandsClose.addEventListener('click', () => {
-                guideCommands.classList.remove('active');
-                guideCommandsToggle.style.display = 'flex';
-            });
-        }
-
-        function switchToGUI() {
-            addToTerminal(`
-                <div class="terminal-line">
-                    <span class="info">🎨 Switching to GUI mode...</span>
-                </div>
-                <div class="terminal-line">
-                    <span class="success">✓ Loading normal portfolio view</span>
-                </div>
-                <br>
-            `);
-
-            setTimeout(() => {
-                terminalContainer.classList.remove('active');
-                guiContainer.classList.add('active');
-                // Hide guide character in GUI mode
-                const guideChar = document.getElementById('guideCharacter');
-                if (guideChar) guideChar.style.display = 'none';
-            }, 1000);
-        }
-
-        function switchToTerminal() {
-            guiContainer.classList.remove('active');
-            terminalContainer.classList.add('active');
-            // Hide guide character in terminal mode
-            const guideChar = document.getElementById('guideCharacter');
-            if (guideChar) guideChar.style.display = 'none';
-
-            addToTerminal(`
-                <div class="terminal-line">
-                    <span class="info">💻 Welcome back to terminal mode!</span>
-                </div>
-                <div class="terminal-line">
-                    <span class="success">Type 'help' to see available commands</span>
-                </div>
-                <br>
-            `);
-
-            // Focus on input
-            const input = document.getElementById('terminal-input');
-            if (input) input.focus();
-        }
-
-        // Hide loading screen after 2 seconds
-        setTimeout(() => {
-            loadingScreen.classList.add('hidden');
-        }, 2000);
-
-        // ID Card drag functionality with elastic effect
-        let isDragging = false;
-        let hasDragged = false;
-        let startY = 0;
-        let currentY = 0;
-        const idCard = document.getElementById('idCard');
-        const pullThreshold = 150; // Distance needed to trigger terminal
-        const maxStretch = 200; // Maximum stretch distance
-
-        // ===== MOUSE-FOLLOWING SWING =====
-        let mouseX = 0;
-        let mouseY = 0;
-        let cardRotateX = 0;
-        let cardRotateY = 0;
-        let isMouseOverCard = false;
-
-        // Track mouse position
-        document.addEventListener('mousemove', (e) => {
-            if (isDragging || hangerContainer.classList.contains('hidden')) return;
-
-            mouseX = e.clientX;
-            mouseY = e.clientY;
-
-            // Get card position
-            const cardRect = idCardContainer.getBoundingClientRect();
-            const cardCenterX = cardRect.left + cardRect.width / 2;
-            const cardCenterY = cardRect.top + cardRect.height / 2;
-
-            // Calculate distance from card center
-            const deltaX = mouseX - cardCenterX;
-            const deltaY = mouseY - cardCenterY;
-
-            // Calculate rotation based on mouse position (max ±15 degrees)
-            const maxRotation = 12;
-            const distanceThreshold = 500;
-
-            // Smooth rotation calculation
-            cardRotateY = (deltaX / distanceThreshold) * maxRotation;
-            cardRotateX = -(deltaY / distanceThreshold) * maxRotation;
-
-            // Clamp values
-            cardRotateY = Math.max(-maxRotation, Math.min(maxRotation, cardRotateY));
-            cardRotateX = Math.max(-maxRotation, Math.min(maxRotation, cardRotateX));
-
-            // Apply rotation to card container if not dragging
-            if (!isDragging) {
-                idCardContainer.style.transform = `rotateX(${cardRotateX}deg) rotateY(${cardRotateY}deg)`;
-                idCardContainer.style.animation = 'none';
-
-                // Also tilt the lanyard slightly
-                const lanyardTop = idCardContainer.querySelector('.lanyard-top');
-                if (lanyardTop) {
-                    lanyardTop.style.transform = `rotateY(${cardRotateY * 0.3}deg)`;
+        // Smooth scroll for in-page links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                const href = this.getAttribute('href');
+                if (href === '#') {
+                    e.preventDefault();
+                    window.scrollTo({ top: 0, behavior: reducedMotion ? 'auto' : 'smooth' });
+                    return;
                 }
-            }
-        });
-
-        // Reset rotation when mouse leaves the area
-        hangerContainer.addEventListener('mouseleave', () => {
-            if (!isDragging) {
-                idCardContainer.style.transition = 'transform 0.5s ease-out';
-                idCardContainer.style.transform = 'rotateX(0deg) rotateY(0deg)';
-                idCardContainer.style.animation = 'swayHanging 4s ease-in-out infinite';
-
-                const lanyardTop = idCardContainer.querySelector('.lanyard-top');
-                if (lanyardTop) {
-                    lanyardTop.style.transform = 'rotateY(0deg)';
-                }
-
-                setTimeout(() => {
-                    idCardContainer.style.transition = '';
-                }, 500);
-            }
-        });
-
-        function applyElasticEffect(deltaY) {
-            const lanyardTop = idCardContainer.querySelector('.lanyard-top');
-            const strapPath = idCardContainer.querySelector('.strap-path-top');
-            const strapSvg = idCardContainer.querySelector('.lanyard-strap-top');
-
-            const baseHeight = 100;
-
-            if (deltaY <= 0) {
-                idCardContainer.style.transform = `rotateX(${cardRotateX}deg) rotateY(${cardRotateY}deg)`;
-                if (lanyardTop) lanyardTop.style.height = `${baseHeight}px`;
-                return;
-            }
-
-            // Elastic resistance - the further you pull, the harder it gets
-            const resistance = 0.6;
-            const elasticY = deltaY * resistance;
-
-            // Move the entire ID card container down while keeping some tilt
-            idCardContainer.style.transform = `translateY(${elasticY}px) rotateX(${cardRotateX * 0.5}deg) rotateY(${cardRotateY * 0.5}deg)`;
-            idCardContainer.style.animation = 'none';
-
-            // Stretch the lanyard upward
-            if (lanyardTop) {
-                const newHeight = baseHeight + elasticY * 0.8;
-                lanyardTop.style.height = `${newHeight}px`;
-
-                // Update SVG viewBox and path for stretching effect
-                if (strapSvg) {
-                    strapSvg.setAttribute('viewBox', `0 0 80 ${newHeight}`);
-                }
-                if (strapPath) {
-                    // Stretch the path
-                    strapPath.setAttribute('d', `M40 ${newHeight} Q35 ${newHeight/2}, 40 0`);
-                }
-            }
-
-            // Visual feedback - card glows more as you pull
-            const progress = Math.min(deltaY / pullThreshold, 1);
-            idCard.style.boxShadow = `
-                0 ${20 + progress * 30}px ${60 + progress * 40}px rgba(0, 255, 65, ${0.3 + progress * 0.4}),
-                0 0 ${30 + progress * 50}px rgba(0, 255, 65, ${progress * 0.5}),
-                inset 0 1px 0 rgba(255,255,255,0.1)
-            `;
-
-            // Add shake effect when almost there
-            if (progress > 0.8 && progress < 1) {
-                idCard.style.animation = 'shake 0.1s infinite';
-            } else {
-                idCard.style.animation = 'none';
-            }
-        }
-
-        function resetElastic() {
-            const lanyardTop = idCardContainer.querySelector('.lanyard-top');
-            const strapPath = idCardContainer.querySelector('.strap-path-top');
-            const strapSvg = idCardContainer.querySelector('.lanyard-strap-top');
-
-            const baseHeight = 100;
-
-            // Bounce back animation
-            idCardContainer.style.transition = 'transform 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55)';
-            if (lanyardTop) lanyardTop.style.transition = 'height 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55)';
-
-            idCardContainer.style.transform = 'rotateX(0deg) rotateY(0deg)';
-            idCardContainer.style.animation = 'swayHanging 4s ease-in-out infinite';
-            idCard.style.animation = 'none';
-
-            // Reset card shadow
-            idCard.style.boxShadow = `
-                0 20px 60px rgba(0, 255, 65, 0.3),
-                inset 0 1px 0 rgba(255,255,255,0.1),
-                inset 0 -1px 0 rgba(0,0,0,0.3)
-            `;
-
-            if (lanyardTop) {
-                lanyardTop.style.height = `${baseHeight}px`;
-                lanyardTop.style.transform = 'rotateY(0deg)';
-            }
-            if (strapSvg) strapSvg.setAttribute('viewBox', `0 0 80 ${baseHeight}`);
-            if (strapPath) strapPath.setAttribute('d', `M40 100 Q35 50, 40 0`);
-
-            setTimeout(() => {
-                idCardContainer.style.transition = '';
-                if (lanyardTop) lanyardTop.style.transition = '';
-            }, 500);
-        }
-
-        function triggerOpenAnimation() {
-            const lanyardTop = idCardContainer.querySelector('.lanyard-top');
-
-            // Unhook animation - card falls and swings away
-            idCardContainer.style.transition = 'transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 0.5s ease';
-            idCardContainer.style.animation = 'none';
-
-            // Card swings and falls
-            idCardContainer.style.transform = 'translateY(120vh) rotate(15deg) scale(0.8)';
-            idCardContainer.style.opacity = '0';
-
-            // Fade out the hanger bar too
-            const hangerBar = document.querySelector('.hanger-bar');
-            if (hangerBar) {
-                hangerBar.style.transition = 'transform 0.5s ease, opacity 0.5s ease';
-                hangerBar.style.transform = 'translateY(-100%)';
-                hangerBar.style.opacity = '0';
-            }
-
-            setTimeout(() => {
-                hangerContainer.classList.add('hidden');
-
-                // Reset for when coming back
-                idCardContainer.style.transform = 'rotate(-1deg)';
-                idCardContainer.style.opacity = '1';
-                idCardContainer.style.transition = '';
-                idCardContainer.style.animation = 'swayHanging 4s ease-in-out infinite';
-
-                if (hangerBar) {
-                    hangerBar.style.transform = 'translateY(0)';
-                    hangerBar.style.opacity = '1';
-                    hangerBar.style.transition = '';
-                }
-
-                if (lanyardTop) {
-                    lanyardTop.style.height = '100px';
-                    lanyardTop.style.transform = 'rotateY(0deg)';
-                }
-
-                // Reset card shadow
-                idCard.style.boxShadow = `
-                    0 20px 60px rgba(0, 255, 65, 0.3),
-                    inset 0 1px 0 rgba(255,255,255,0.1),
-                    inset 0 -1px 0 rgba(0,0,0,0.3)
-                `;
-
-                terminalContainer.classList.add('active');
-
-                // Hide guide character when terminal is active
-                const guideChar = document.getElementById('guideCharacter');
-                if (guideChar) {
-                    guideChar.style.display = 'none';
-                }
-
-                // Show command toggle button next to guide character
-                const guideCommandsToggle = document.getElementById('guideCommandsToggle');
-                if (guideCommandsToggle) {
-                    setTimeout(() => {
-                        guideCommandsToggle.classList.add('active');
-                    }, 500);
-                }
-
-                setTimeout(() => {
-                    displayWelcomeMessage();
-                }, 300);
-            }, 600);
-        }
-
-        // Dragging to pull down the card
-        idCardContainer.addEventListener('mousedown', (e) => {
-            e.preventDefault();
-            isDragging = true;
-            hasDragged = false;
-            startY = e.clientY;
-            idCardContainer.style.transition = '';
-            idCardContainer.style.animation = 'none';
-        });
-
-        document.addEventListener('mousemove', (e) => {
-            if (!isDragging) return;
-
-            currentY = e.clientY - startY;
-
-            // Mark as dragged if moved more than 5px
-            if (Math.abs(currentY) > 5) {
-                hasDragged = true;
-            }
-
-            applyElasticEffect(currentY);
-        });
-
-        document.addEventListener('mouseup', () => {
-            if (!isDragging) return;
-            isDragging = false;
-
-            if (hasDragged && currentY >= pullThreshold) {
-                triggerOpenAnimation();
-            } else if (hasDragged) {
-                resetElastic();
-            }
-            currentY = 0;
-        });
-
-        // Touch support for mobile
-        idCardContainer.addEventListener('touchstart', (e) => {
-            isDragging = true;
-            hasDragged = false;
-            startY = e.touches[0].clientY;
-            idCardContainer.style.transition = '';
-            idCardContainer.style.animation = 'none';
-        });
-
-        document.addEventListener('touchmove', (e) => {
-            if (!isDragging) return;
-
-            currentY = e.touches[0].clientY - startY;
-
-            // Mark as dragged if moved more than 5px
-            if (Math.abs(currentY) > 5) {
-                hasDragged = true;
-            }
-
-            applyElasticEffect(currentY);
-        });
-
-        document.addEventListener('touchend', () => {
-            if (!isDragging) return;
-            isDragging = false;
-
-            if (hasDragged && currentY >= pullThreshold) {
-                triggerOpenAnimation();
-            } else if (hasDragged) {
-                resetElastic();
-            }
-            currentY = 0;
-        });
-
-        function activateTerminal() {
-            triggerOpenAnimation();
-        }
-
-        function displayWelcomeMessage() {
-            const welcome = `
-<pre class="ascii-art">
-   _____             __             __       ____        __    _ __
-  / ___/____ _____  / /_____  _____/ /_     / __ \\____ _/ /_  (_) /_
-  \\__ \\/ __ \`/ __ \\/ __/ __ \\/ ___/ __ \\   / / / / __ \`/ __ \\/ / __/
- ___/ / /_/ / / / / /_/ /_/ (__  ) / / /  / /_/ / /_/ / / / / / /_
-/____/\\__,_/_/ /_/\\__/\\____/____/_/ /_/  /_____/\\__,_/_/ /_/_/\\__/
-</pre>
-<div class="terminal-line">
-    <span class="success">Welcome to Santosh's Terminal Portfolio v2.0</span>
-</div>
-<div class="terminal-line">
-    <span class="info">System initialized successfully...</span>
-</div>
-<div class="terminal-line">
-    <span class="output">Type <span class="help-command">'help'</span> to see available commands</span>
-</div>
-<div class="terminal-line">
-    <span class="warning">Tip: Use <span class="help-command">'easter-egg'</span> to discover hidden features!</span>
-</div>
-<br>
-            `;
-
-            addToTerminal(welcome);
-            initializeInput();
-        }
-
-        function addToTerminal(content) {
-            terminalBody.insertAdjacentHTML('beforeend', content);
-            // Scroll the terminal-body container (parent of terminalBody)
-            const terminalBodyContainer = document.querySelector('.terminal-body');
-            terminalBodyContainer.scrollTop = terminalBodyContainer.scrollHeight;
-        }
-
-        // Initialize the fixed input (called once)
-        function initializeInput() {
-            const input = document.getElementById('terminal-input');
-            if (input) {
-                input.focus();
-
-                // Only add event listener if not already added
-                if (!input.dataset.initialized) {
-                    input.addEventListener('keydown', handleCommand);
-                    input.dataset.initialized = 'true';
-
-                    // Keep focus on input when clicking terminal
-                    document.querySelector('.terminal-body').addEventListener('click', () => {
-                        input.focus();
-                    });
-                }
-            }
-        }
-
-        function handleCommand(e) {
-            const input = e.target;
-
-            if (e.key === 'Enter') {
-                const command = input.value.trim().toLowerCase();
-
-                if (command) {
-                    commandHistory.push(command);
-                    historyIndex = commandHistory.length;
-                }
-
-                // Display the command in output
-                addToTerminal(`
-                    <div class="terminal-line">
-                        <span class="prompt">santosh@portfolio:~$</span>
-                        <span class="command"> ${input.value}</span>
-                    </div>
-                `);
-
-                // Clear the input
-                input.value = '';
-
-                // Process the command
-                processCommand(command);
-
-            } else if (e.key === 'ArrowUp') {
+                const target = document.querySelector(href);
+                if (!target) return;
                 e.preventDefault();
-                if (historyIndex > 0) {
-                    historyIndex--;
-                    input.value = commandHistory[historyIndex];
-                }
-            } else if (e.key === 'ArrowDown') {
-                e.preventDefault();
-                if (historyIndex < commandHistory.length - 1) {
-                    historyIndex++;
-                    input.value = commandHistory[historyIndex];
-                } else {
-                    historyIndex = commandHistory.length;
-                    input.value = '';
-                }
-            } else if (e.key === 'Tab') {
-                e.preventDefault();
-                autocomplete(input);
-            }
-        }
-
-        function autocomplete(input) {
-            const commands = ['help', 'about', 'skills', 'projects', 'experience', 'education', 'contact', 'clear', 'gui', 'exit', 'easter-egg', 'matrix', 'sudo', 'whoami', 'history'];
-            const partial = input.value.toLowerCase();
-            
-            const matches = commands.filter(cmd => cmd.startsWith(partial));
-            
-            if (matches.length === 1) {
-                input.value = matches[0];
-            } else if (matches.length > 1) {
-                addToTerminal(`
-                    <div class="terminal-line">
-                        <span class="info">Possible commands: ${matches.join(', ')}</span>
-                    </div>
-                `);
-            }
-        }
-
-        function processCommand(command) {
-            // Parse command and arguments
-            const parts = command.split(' ');
-            const cmd = parts[0];
-            const args = parts.slice(1);
-            
-            switch(cmd) {
-                case 'help':
-                    showHelp();
-                    break;
-                case 'about':
-                    showAbout();
-                    break;
-                case 'skills':
-                    showSkills();
-                    break;
-                case 'projects':
-                    showProjects();
-                    break;
-                case 'experience':
-                    showExperience();
-                    break;
-                case 'education':
-                    showEducation();
-                    break;
-                case 'contact':
-                    showContact();
-                    break;
-                case 'clear':
-                    clearTerminal();
-                    break;
-                case 'cls':
-                    clearTerminal();
-                    break;
-                case 'gui':
-                    switchToGUI();
-                    break;
-                case 'exit':
-                    goHome();
-                    break;
-                case 'easter-egg':
-                    showEasterEgg();
-                    break;
-                case 'matrix':
-                    matrixEffect();
-                    break;
-                case 'sudo':
-                    sudoCommand(args);
-                    break;
-                case 'whoami':
-                    whoami();
-                    break;
-                case 'date':
-                    showDate();
-                    break;
-                case 'time':
-                    showTime();
-                    break;
-                case 'history':
-                    showHistory();
-                    break;
-                case '':
-                    // Empty command, do nothing
-                    break;
-                default:
-                    showError(cmd);
-            }
-        }
-
-        function showHelp() {
-            addToTerminal(`
-                <div class="help-panel">
-                    <div class="terminal-line">
-                        <span class="help-command">Available Commands:</span>
-                    </div>
-                    <br>
-                    <div class="terminal-line">
-                        <span class="help-command">help</span>
-                        <span class="help-description">- Display this help message</span>
-                    </div>
-                    <div class="terminal-line">
-                        <span class="help-command">about</span>
-                        <span class="help-description">- Learn more about me</span>
-                    </div>
-                    <div class="terminal-line">
-                        <span class="help-command">skills</span>
-                        <span class="help-description">- View my technical skills</span>
-                    </div>
-                    <div class="terminal-line">
-                        <span class="help-command">projects</span>
-                        <span class="help-description">- See my featured projects</span>
-                    </div>
-                    <div class="terminal-line">
-                        <span class="help-command">experience</span>
-                        <span class="help-description">- View my work experience</span>
-                    </div>
-                    <div class="terminal-line">
-                        <span class="help-command">education</span>
-                        <span class="help-description">- See my educational background</span>
-                    </div>
-                    <div class="terminal-line">
-                        <span class="help-command">contact</span>
-                        <span class="help-description">- Get my contact information</span>
-                    </div>
-                    <div class="terminal-line">
-                        <span class="help-command">clear / cls</span>
-                        <span class="help-description">- Clear the terminal screen</span>
-                    </div>
-                    <div class="terminal-line">
-                        <span class="help-command">exit</span>
-                        <span class="help-description">- Exit terminal and return to home screen</span>
-                    </div>
-                    <div class="terminal-line">
-                        <span class="help-command">gui</span>
-                        <span class="help-description">- Switch to normal portfolio view</span>
-                    </div>
-                    <div class="terminal-line">
-                        <span class="help-command">history</span>
-                        <span class="help-description">- Show command history</span>
-                    </div>
-                    <div class="terminal-line">
-                        <span class="help-command">whoami</span>
-                        <span class="help-description">- Display current user</span>
-                    </div>
-                    <div class="terminal-line">
-                        <span class="help-command">date / time</span>
-                        <span class="help-description">- Show current date and time</span>
-                    </div>
-                    <br>
-                    <div class="terminal-line">
-                        <span class="warning">Easter Eggs:</span>
-                    </div>
-                    <div class="terminal-line">
-                        <span class="help-command">easter-egg</span>
-                        <span class="help-description">- Discover hidden features</span>
-                    </div>
-                    <div class="terminal-line">
-                        <span class="help-command">matrix</span>
-                        <span class="help-description">- Enter the Matrix</span>
-                    </div>
-                    <div class="terminal-line">
-                        <span class="help-command">sudo [command]</span>
-                        <span class="help-description">- Run command as superuser (try it!)</span>
-                    </div>
-                    <br>
-                    <div class="terminal-line">
-                        <span class="info">Pro Tip: Use TAB for autocomplete, ↑↓ for command history</span>
-                    </div>
-                </div>
-            `);
-        }
-
-        function showAbout() {
-            addToTerminal(`
-                <div class="section-header">ABOUT SANTOSH DAHIT</div>
-                <br>
-                <div class="terminal-line">
-                    <span class="output">
-                        I'm a passionate Backend Engineer currently working at Kayple, a B2C 
-                        startup in Seoul, where I architect and develop robust backend systems 
-                        that serve thousands of users daily.
-                    </span>
-                </div>
-                <br>
-                <div class="terminal-line">
-                    <span class="output">
-                        With a Master's degree in Data Science from Kwangwoon University and 
-                        a Bachelor's in Computer Engineering from Kyungdong University, I bring 
-                        both theoretical knowledge and practical expertise to every project.
-                    </span>
-                </div>
-                <br>
-                <div class="terminal-line">
-                    <span class="info">📊 Experience: 2.5+ years in production</span>
-                </div>
-                <div class="terminal-line">
-                    <span class="info">🚀 Applications: 7+ live mobile apps</span>
-                </div>
-                <div class="terminal-line">
-                    <span class="info">👥 Users Served: Thousands of active users</span>
-                </div>
-                <div class="terminal-line">
-                    <span class="info">📍 Location: Seoul, South Korea</span>
-                </div>
-                <br>
-            `);
-        }
-
-        function showSkills() {
-            addToTerminal(`
-                <div class="section-header">TECHNICAL SKILLS</div>
-                <br>
-                <div class="terminal-line">
-                    <span class="info">💻 Backend Development:</span>
-                </div>
-                <div class="terminal-line">
-                    <span class="skill-badge">Spring Boot and Frameworks</span>
-                    <span class="skill-badge">Core Java</span>
-                    <span class="skill-badge">JWT</span>
-                    <span class="skill-badge">OOP</span>
-                    <span class="skill-badge">In-app-payment</span>
-                </div>
-                <br>
-                <div class="terminal-line">
-                    <span class="info">🗄️ Database & Cloud:</span>
-                </div>
-                <div class="terminal-line">
-                    <span class="skill-badge">RDS</span>
-                    <span class="skill-badge">SQL</span>
-                    <span class="skill-badge">AWS</span>
-                    <span class="skill-badge">GCP</span>
-                    <span class="skill-badge">Prometheus</span>
-                    <span class="skill-badge">Grafana</span>
-                    <span class="skill-badge">Portainer</span>
-                </div>
-                <br>
-                <div class="terminal-line">
-                    <span class="info">🔧 DevOps & Tools:</span>
-                </div>
-                <div class="terminal-line">
-                    <span class="skill-badge">Docker</span>
-                    <span class="skill-badge">Git</span>
-                    <span class="skill-badge">Kubernetes</span>
-                    <span class="skill-badge">Cloud Run</span>
-                </div>
-                <br>
-                <div class="terminal-line">
-                    <span class="info">🤖 Machine Learning & Data Science:</span>
-                </div>
-                <div class="terminal-line">
-                    <span class="skill-badge">Python</span>
-                    <span class="skill-badge">Pandas</span>
-                    <span class="skill-badge">NumPy</span>
-                    <span class="skill-badge">Scikit-learn</span>
-                    <span class="skill-badge">TensorFlow</span>
-                    <span class="skill-badge">OpenCV</span>
-                    <span class="skill-badge">Data Visualization</span>
-                    <span class="skill-badge">Power BI</span>
-                    <span class="skill-badge">Tableau</span>
-                </div>
-                <br>
-            `);
-        }
-
-        function showProjects() {
-            addToTerminal(`
-                <div class="section-header">FEATURED PROJECTS</div>
-                <br>
-                
-                <div class="project-card-terminal">
-                    <h3>🎓 EDUFINGERS (에듀핑거즈)</h3>
-                    <p>A comprehensive learning quiz platform available on Google Play, designed to provide interactive educational content and assessments for students.</p>
-                    <div>
-                        <span class="project-tag">Spring Framework</span>
-                        <span class="project-tag">Java</span>
-                        <span class="project-tag">AWS</span>
-                        <span class="project-tag">GCP</span>
-                        <span class="project-tag">Docker</span>
-                    </div>
-                </div>
-
-                <div class="project-card-terminal">
-                    <h3>👥 BOSC</h3>
-                    <p>Platform for gathering similar interest people - a social networking application that connects users based on shared interests and activities.</p>
-                    <div>
-                        <span class="project-tag">Core Java</span>
-                        <span class="project-tag">Spring Boot</span>
-                        <span class="project-tag">Prometheus</span>
-                    </div>
-                </div>
-
-                <div class="project-card-terminal">
-                    <h3>🛍️ EggD</h3>
-                    <p>An innovative mobile application for both influencers and sellers, available on Google Play. Facilitates connection between content creators and businesses.</p>
-                    <div>
-                        <span class="project-tag">Core Java</span>
-                        <span class="project-tag">Spring Boot</span>
-                        <span class="project-tag">AWS</span>
-                        <span class="project-tag">Docker</span>
-                    </div>
-                </div>
-
-                <div class="project-card-terminal">
-                    <h3>🗺️ Many Korea</h3>
-                    <p>Tourism application for Korea providing detailed information about places and events. Helps tourists discover and explore Korean attractions and cultural events.</p>
-                    <div>
-                        <span class="project-tag">Core Java</span>
-                        <span class="project-tag">Spring Boot</span>
-                        <span class="project-tag">Docker</span>
-                    </div>
-                </div>
-
-                <div class="project-card-terminal">
-                    <h3>💼 돈벌잠 (Money Job)</h3>
-                    <p>Mobile application designed specifically for construction workers, available on Google Play. Connects workers with construction job opportunities and projects.</p>
-                    <div>
-                        <span class="project-tag">Spring Boot</span>
-                        <span class="project-tag">Android</span>
-                        <span class="project-tag">MySQL</span>
-                    </div>
-                </div>
-                <br>
-            `);
-        }
-
-        function showExperience() {
-            addToTerminal(`
-                <div class="section-header">WORK EXPERIENCE</div>
-                <br>
-                <div class="terminal-line">
-                    <span class="info">🏢 Back End Developer - Kayple</span>
-                </div>
-                <div class="terminal-line">
-                    <span class="output">   📅 Aug 2024 - Present (Full-time)</span>
-                </div>
-                <div class="terminal-line">
-                    <span class="output">   📍 Seoul, South Korea</span>
-                </div>
-                <div class="terminal-line">
-                    <span class="output">   💬 "Making endpoint to connect the people with the server 😁😁"</span>
-                </div>
-                <br>
-                <div class="terminal-line">
-                    <span class="output">   • Architected and deployed 7+ production applications</span>
-                </div>
-                <div class="terminal-line">
-                    <span class="output">   • Built EDUFINGERS, BOSC, EggD, Many Korea platforms</span>
-                </div>
-                <div class="terminal-line">
-                    <span class="output">   • Implemented authentication systems with Spring Security</span>
-                </div>
-                <br>
-                <div class="terminal-line">
-                    <span class="info">🏢 Java Backend Developer - 모라고 (Freelance)</span>
-                </div>
-                <div class="terminal-line">
-                    <span class="output">   📅 Oct 2023 - Oct 2024 (Part-time)</span>
-                </div>
-                <div class="terminal-line">
-                    <span class="output">   💬 "Providing freelance translators to help foreigners in Korea"</span>
-                </div>
-                <br>
-                <div class="terminal-line">
-                    <span class="output">   • Developed backend services for translator platform</span>
-                </div>
-                <div class="terminal-line">
-                    <span class="output">   • Implemented Spring MVC and GraphQL integration</span>
-                </div>
-                <br>
-            `);
-        }
-
-        function showEducation() {
-            addToTerminal(`
-                <div class="section-header">EDUCATION</div>
-                <br>
-                <div class="terminal-line">
-                    <span class="info">🎓 Master's Degree in Data Science</span>
-                </div>
-                <div class="terminal-line">
-                    <span class="output">   🏫 Kwangwoon University</span>
-                </div>
-                <div class="terminal-line">
-                    <span class="output">   📅 Sep 2022 - Aug 2024</span>
-                </div>
-                <div class="terminal-line">
-                    <span class="output">   📚 Data Visualization, Data Analytics, Machine Learning</span>
-                </div>
-                <br>
-                <div class="terminal-line">
-                    <span class="info">🎓 Bachelor's Degree in Computer Engineering</span>
-                </div>
-                <div class="terminal-line">
-                    <span class="output">   🏫 Kyungdong University</span>
-                </div>
-                <div class="terminal-line">
-                    <span class="output">   📅 Sep 2017 - Aug 2021</span>
-                </div>
-                <div class="terminal-line">
-                    <span class="output">   📚 Python, HTML5, Core Java, Web Development, Computer techs</span>
-                </div>
-                <br>
-            `);
-        }
-
-        function showContact() {
-            addToTerminal(`
-                <div class="section-header">CONTACT INFORMATION</div>
-                <br>
-                <div class="terminal-line">
-                    <span class="info">📧 Email:</span>
-                    <span class="output"> santoshdahit454@gmail.com</span>
-                </div>
-                <div class="terminal-line">
-                    <span class="info">💼 LinkedIn:</span>
-                    <span class="output"> linkedin.com/in/santosh-dahit</span>
-                </div>
-                <div class="terminal-line">
-                    <span class="info">🐙 GitHub:</span>
-                    <span class="output"> github.com/SantoshDahit</span>
-                </div>
-                <div class="terminal-line">
-                    <span class="info">📍 Location:</span>
-                    <span class="output"> Seoul, South Korea</span>
-                </div>
-                <div class="terminal-line">
-                    <span class="info">💻 Status:</span>
-                    <span class="success"> Open to opportunities</span>
-                </div>
-                <br>
-                <div class="terminal-line">
-                    <span class="warning">💡 Tip: You can click on the links to copy them!</span>
-                </div>
-                <br>
-            `);
-        }
-
-        function clearTerminal() {
-            terminalBody.innerHTML = '';
-        }
-
-        function goHome() {
-            addToTerminal(`
-                <div class="terminal-line">
-                    <span class="info">🏠 Returning to home screen...</span>
-                </div>
-            `);
-
-            setTimeout(() => {
-                terminalContainer.classList.remove('active');
-                if (guideCommands) guideCommands.classList.remove('active');
-                if (guideCommandsToggle) guideCommandsToggle.classList.remove('active');
-                hangerContainer.classList.remove('hidden');
-                clearTerminal();
-            }, 500);
-        }
-
-        function showHistory() {
-            addToTerminal(`
-                <div class="terminal-line">
-                    <span class="info">Command History:</span>
-                </div>
-            `);
-            
-            commandHistory.forEach((cmd, index) => {
-                addToTerminal(`
-                    <div class="terminal-line">
-                        <span class="output">  ${index + 1}  ${cmd}</span>
-                    </div>
-                `);
+                target.scrollIntoView({ behavior: reducedMotion ? 'auto' : 'smooth', block: 'start' });
             });
-            addToTerminal('<br>');
+        });
+
+
+        // Mobile menu
+        const menuToggle = document.getElementById('menuToggle');
+        const mobileNav = document.getElementById('mobileNav');
+
+        function closeMenu() {
+            menuToggle.classList.remove('active');
+            menuToggle.setAttribute('aria-expanded', 'false');
+            mobileNav.classList.remove('active');
+            document.body.style.overflow = '';
         }
 
-        function whoami() {
-            addToTerminal(`
-                <div class="terminal-line">
-                    <span class="success">santosh-dahit</span>
-                </div>
-                <div class="terminal-line">
-                    <span class="output">Backend Engineer | Spring Boot Expert | Data Science Enthusiast</span>
-                </div>
-                <br>
-            `);
-        }
+        menuToggle.addEventListener('click', () => {
+            const open = !mobileNav.classList.contains('active');
+            menuToggle.classList.toggle('active', open);
+            menuToggle.setAttribute('aria-expanded', String(open));
+            mobileNav.classList.toggle('active', open);
+            document.body.style.overflow = open ? 'hidden' : '';
+        });
 
-        function showDate() {
-            const now = new Date();
-            addToTerminal(`
-                <div class="terminal-line">
-                    <span class="output">${now.toDateString()}</span>
-                </div>
-                <br>
-            `);
-        }
+        document.querySelectorAll('.mobile-link').forEach(link => link.addEventListener('click', closeMenu));
 
-        function showTime() {
-            const now = new Date();
-            addToTerminal(`
-                <div class="terminal-line">
-                    <span class="output">${now.toLocaleTimeString()}</span>
-                </div>
-                <br>
-            `);
-        }
-
-        function showEasterEgg() {
-            const eggs = [
-                "🥚 You found the easter egg! Here's a secret: I debug with console.log() like everyone else 😄",
-                "🎮 Achievement Unlocked: Terminal Explorer!",
-                "🚀 Fun fact: This entire portfolio is less than 1000 lines of code!",
-                "💡 Pro tip: Try 'sudo rm -rf /' (just kidding, DON'T!)",
-                "🎵 Now playing: Binary Beats - The Algorithm ft. Stack Overflow"
-            ];
-            
-            const randomEgg = eggs[Math.floor(Math.random() * eggs.length)];
-            
-            addToTerminal(`
-                <div class="terminal-line">
-                    <span class="warning">${randomEgg}</span>
-                </div>
-                <br>
-            `);
-        }
-
-        function matrixEffect() {
-            addToTerminal(`
-                <div class="terminal-line glitch">
-                    <span class="success">Entering the Matrix...</span>
-                </div>
-                <div class="terminal-line">
-                    <span class="success">Wake up, Neo...</span>
-                </div>
-                <div class="terminal-line">
-                    <span class="success">The Matrix has you...</span>
-                </div>
-                <div class="terminal-line">
-                    <span class="success">Follow the white rabbit 🐰</span>
-                </div>
-                <br>
-            `);
-            
-            // Temporarily increase matrix rain
-            const originalOpacity = canvas.style.opacity;
-            canvas.style.opacity = '0.5';
-            setTimeout(() => {
-                canvas.style.opacity = originalOpacity;
-            }, 3000);
-        }
-
-        function sudoCommand(args) {
-            const cmd = args.join(' ');
-            
-            if (cmd === 'rm -rf /') {
-                addToTerminal(`
-                    <div class="terminal-line">
-                        <span class="error">❌ Permission denied: Are you trying to break my portfolio? 😅</span>
-                    </div>
-                    <div class="terminal-line">
-                        <span class="warning">⚠️  Nice try though! Here's a cookie instead: 🍪</span>
-                    </div>
-                    <br>
-                `);
-            } else if (cmd === 'hire santosh') {
-                addToTerminal(`
-                    <div class="terminal-line">
-                        <span class="success">✅ Excellent decision! Initiating hiring protocol...</span>
-                    </div>
-                    <div class="terminal-line">
-                        <span class="info">📧 Please contact: santoshdahit454@gmail.com</span>
-                    </div>
-                    <br>
-                `);
-            } else if (cmd) {
-                addToTerminal(`
-                    <div class="terminal-line">
-                        <span class="error">sudo: ${cmd}: command not found</span>
-                    </div>
-                    <div class="terminal-line">
-                        <span class="info">💡 Try 'sudo hire santosh' for better results!</span>
-                    </div>
-                    <br>
-                `);
-            } else {
-                addToTerminal(`
-                    <div class="terminal-line">
-                        <span class="error">sudo: no command specified</span>
-                    </div>
-                    <br>
-                `);
-            }
-        }
-
-        function showError(cmd) {
-            addToTerminal(`
-                <div class="terminal-line">
-                    <span class="error">bash: ${cmd}: command not found</span>
-                </div>
-                <div class="terminal-line">
-                    <span class="info">Type 'help' to see available commands</span>
-                </div>
-                <br>
-            `);
-        }
-
-        // Keyboard shortcuts
         document.addEventListener('keydown', (e) => {
-            // Ctrl/Cmd + L to clear
-            if ((e.ctrlKey || e.metaKey) && e.key === 'l') {
-                e.preventDefault();
-                clearTerminal();
-                // Focus on the fixed input after clearing
-                const input = document.getElementById('terminal-input');
-                if (input) input.focus();
-            }
+            if (e.key === 'Escape') closeMenu();
         });
 
-        // ===== GUIDE CHARACTER SPEECH =====
-        const speechMessages = [
-            "Hi there! 👋 Welcome to <span class='highlight'>Santosh's Portfolio</span>!",
-            "To enter the terminal, just <span class='highlight'>pull down</span> the ID card! ⬇️",
-            "Drag the card down to unlock the <span class='highlight'>terminal</span>! 🔓",
-            "Click any <span class='highlight'>command</span> on my list to try it! 💡",
-            "Type <span class='highlight'>'about'</span> to learn about Santosh!",
-            "Type <span class='highlight'>'skills'</span> to see tech expertise!",
-            "Type <span class='highlight'>'projects'</span> to view portfolio work!",
-            "Don't miss the <span class='highlight'>'easter-egg'</span> command! 🥚",
-            "Ready to explore? Let's go! 🚀"
-        ];
+        // Count-up stats
+        const statObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (!entry.isIntersecting) return;
+                statObserver.unobserve(entry.target);
+                animateStat(entry.target);
+            });
+        }, { threshold: 0.5 });
 
-        let currentMessageIndex = 0;
-        const speechText = document.getElementById('speechText');
-        const speechBubble = document.getElementById('speechBubble');
+        document.querySelectorAll('.stat-number').forEach(el => {
+            const numNode = el.firstChild;
+            if (!numNode || numNode.nodeType !== Node.TEXT_NODE) return;
+            const value = parseFloat(numNode.textContent);
+            if (Number.isNaN(value)) return;
+            el.dataset.target = String(value);
+            if (reducedMotion) return;
+            numNode.textContent = '0';
+            statObserver.observe(el);
+        });
 
-        function cycleMessages() {
-            if (!speechText || !speechBubble) return;
+        function animateStat(el) {
+            const target = parseFloat(el.dataset.target);
+            const decimals = target % 1 ? 1 : 0;
+            const numNode = el.firstChild;
+            const duration = 1400;
+            let start = null;
 
-            // Fade out
-            speechBubble.style.opacity = '0';
-            speechBubble.style.transform = 'scale(0.9)';
-
-            setTimeout(() => {
-                currentMessageIndex = (currentMessageIndex + 1) % speechMessages.length;
-                speechText.innerHTML = speechMessages[currentMessageIndex];
-
-                // Fade in
-                speechBubble.style.opacity = '1';
-                speechBubble.style.transform = 'scale(1)';
-            }, 300);
-        }
-
-        // Add transition for smooth animation
-        if (speechBubble) {
-            speechBubble.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
-        }
-
-        // Cycle messages every 5 seconds
-        setInterval(cycleMessages, 5000);
-
-        // ===== STATUS BAR TIME =====
-        function updateTime() {
-            const timeElement = document.getElementById('currentTime');
-            if (timeElement) {
-                const now = new Date();
-                const hours = String(now.getHours()).padStart(2, '0');
-                const minutes = String(now.getMinutes()).padStart(2, '0');
-                const seconds = String(now.getSeconds()).padStart(2, '0');
-                timeElement.textContent = `${hours}:${minutes}:${seconds}`;
+            function step(ts) {
+                if (start === null) start = ts;
+                const progress = Math.min(1, (ts - start) / duration);
+                const eased = 1 - Math.pow(1 - progress, 3);
+                numNode.textContent = (target * eased).toFixed(decimals);
+                if (progress < 1) requestAnimationFrame(step);
             }
+            requestAnimationFrame(step);
         }
 
-        updateTime();
-        setInterval(updateTime, 1000);
+        // View counter
+        (function () {
+            const COUNT_KEY = 'portfolioViewCount';
+            const SESSION_KEY = 'portfolioVisited';
+            let count = parseInt(localStorage.getItem(COUNT_KEY) || '0', 10);
 
-        // ===== HIDE DECORATIONS WHEN TERMINAL ACTIVE =====
-        const statusBar = document.getElementById('statusBar');
-        const floatingIconsEl = document.getElementById('floatingIcons');
-        const guideChar = document.getElementById('guideCharacter');
-        const scanLines = document.querySelector('.scan-lines');
+            if (!sessionStorage.getItem(SESSION_KEY)) {
+                count++;
+                localStorage.setItem(COUNT_KEY, String(count));
+                sessionStorage.setItem(SESSION_KEY, '1');
+            }
 
-        function hideDecorations() {
-            if (statusBar) statusBar.style.display = 'none';
-            if (floatingIconsEl) floatingIconsEl.style.display = 'none';
-            if (scanLines) scanLines.style.display = 'none';
-            document.querySelectorAll('.corner-decor').forEach(el => el.style.display = 'none');
-            // Keep guide character visible in terminal mode - don't hide it
-        }
-
-        function showDecorations() {
-            if (statusBar) statusBar.style.display = 'flex';
-            if (floatingIconsEl) floatingIconsEl.style.display = 'block';
-            if (guideChar) guideChar.style.display = 'flex';
-            if (scanLines) scanLines.style.display = 'block';
-            document.querySelectorAll('.corner-decor').forEach(el => el.style.display = 'block');
-        }
-
-        // Modify triggerOpenAnimation to hide decorations
-        const originalTriggerOpen = triggerOpenAnimation;
-        triggerOpenAnimation = function() {
-            hideDecorations();
-            originalTriggerOpen();
-        };
-
-        // Modify goHome to show decorations
-        const originalGoHome = goHome;
-        goHome = function() {
-            addToTerminal(`
-                <div class="terminal-line">
-                    <span class="info">🏠 Returning to home screen...</span>
-                </div>
-            `);
-
-            setTimeout(() => {
-                terminalContainer.classList.remove('active');
-                if (guideCommands) guideCommands.classList.remove('active');
-                if (guideCommandsToggle) guideCommandsToggle.classList.remove('active');
-                hangerContainer.classList.remove('hidden');
-                showDecorations();
-                clearTerminal();
-            }, 500);
-        };
+            document.getElementById('viewCount').textContent = count.toLocaleString();
+        })();
     </script>
 </body>
 </html>

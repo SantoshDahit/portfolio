@@ -283,6 +283,9 @@
         }
 
         .lang-switch-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
             font-family: var(--mono);
             font-size: 0.75rem;
             padding: 0.55rem 0.95rem;
@@ -341,11 +344,23 @@
             background: var(--bg);
             display: flex;
             flex-direction: column;
-            justify-content: center;
             gap: 0.5rem;
-            padding: 0 var(--gutter);
+            padding: 5.5rem var(--gutter) 2.5rem;
+            /* clip, so the closed menu can never bleed past its own box */
+            overflow-y: auto;
             transform: translateY(-100%);
             transition: transform 0.4s cubic-bezier(0.65, 0, 0.35, 1);
+        }
+
+        /* Auto margins centre the links when there's room but fall back to the
+           top when there isn't, which keeps them scrollable on short (landscape)
+           viewports. justify-content: center would strand the first link. */
+        .mobile-link:first-of-type {
+            margin-top: auto;
+        }
+
+        .mobile-link:last-of-type {
+            margin-bottom: auto;
         }
 
         .mobile-nav.active {
@@ -1207,7 +1222,7 @@
                 <li><a href="#contact">연락처</a></li>
             </ul>
             <div class="nav-actions">
-                <button class="lang-switch-btn" id="langSwitchBtn" onclick="switchLang()">🇺🇸 English</button>
+                <a class="lang-switch-btn" href="index.html" hreflang="en" lang="en">🇺🇸 English</a>
                 <a href="#contact" class="btn btn-primary nav-cta">연락하기</a>
                 <button class="menu-toggle" id="menuToggle" aria-label="메뉴 열기" aria-expanded="false">
                     <span></span><span></span><span></span>
@@ -1885,15 +1900,6 @@
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') closeMenu();
         });
-
-        // Language switch — talk to the terminal shell when embedded
-        function switchLang() {
-            if (window.parent !== window) {
-                window.parent.postMessage({ type: 'switchLang', lang: 'en' }, '*');
-            } else {
-                window.location.href = 'portfolio.html';
-            }
-        }
 
         // Count-up stats
         const statObserver = new IntersectionObserver((entries) => {
